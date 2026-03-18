@@ -8,10 +8,14 @@ function get_db(): PDO {
     static $db = null;
     if ($db === null) {
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
-        $db = new PDO($dsn, DB_USER, DB_PASS);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        init_db($db);
+        try {
+            $db = new PDO($dsn, DB_USER, DB_PASS);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            init_db($db);
+        } catch (PDOException $e) {
+            die('<pre style="color:red;padding:2rem;">Database connection failed: ' . htmlspecialchars($e->getMessage()) . '</pre>');
+        }
     }
     return $db;
 }
