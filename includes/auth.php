@@ -21,7 +21,7 @@ function require_auth(): void {
 function attempt_login(string $password): bool {
     require_once __DIR__ . '/db.php';
     $db   = get_db();
-    $hash = $db->query("SELECT value FROM settings WHERE key = 'admin_password'")->fetchColumn();
+    $hash = $db->query("SELECT value FROM settings WHERE `key` = 'admin_password'")->fetchColumn();
     if ($hash && password_verify($password, $hash)) {
         start_session();
         session_regenerate_id(true);
