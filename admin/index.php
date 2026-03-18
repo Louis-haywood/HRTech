@@ -503,7 +503,7 @@ if (is_logged_in()) {
 
     <?php if ($show_first_login): ?>
     <div class="first-login-banner">
-      <strong>⚠️ Welcome! Please change your password before doing anything else.</strong>
+      <strong>Welcome! Please change your password before doing anything else.</strong>
       The temporary password is <code>hrls2026</code> — click <strong>Password</strong> in the sidebar to change it now.
     </div>
     <?php endif; ?>
@@ -863,7 +863,7 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
     contact_email: document.getElementById('s_contact_email').value,
   });
   btn.disabled = false; btn.textContent = 'Save Changes';
-  if (res.success) showAlert('settingsAlert', '✅ Settings saved successfully!');
+  if (res.success) showAlert('settingsAlert', 'Settings saved.');
   else showAlert('settingsAlert', res.error || 'Error saving.', 'error');
 });
 
