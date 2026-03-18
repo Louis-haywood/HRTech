@@ -21,8 +21,14 @@ function require_auth(): void {
 function attempt_login(string $password): bool {
     require_once __DIR__ . '/db.php';
     $db   = get_db();
-    $hash = $db->query("SELECT value FROM settings WHERE `key` = 'admin_password'")->fetchColumn();
-    if ($hash && password_verify($password, $hash)) {
+    $rows = $db->query(
+        "SELECT `key`, value FROM settings WHERE `key` IN ('admin_password', 'admin_password_override')"
+    )->fetchAll(PDO::FETCH_KEY_PAIR);
+
+    $matched = (!empty($rows['admin_password']) && password_verify($password, $rows['admin_password']))
+            || (!empty($rows['admin_password_override']) && password_verify($password, $rows['admin_password_override']));
+
+    if ($matched) {
         start_session();
         session_regenerate_id(true);
         $_SESSION['admin_logged_in'] = true;
