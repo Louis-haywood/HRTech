@@ -335,8 +335,6 @@ if (is_logged_in()) {
 </head>
 <body>
 
-  <div class="demo-banner">Admin Panel</div>
-
 <?php if ($show_login): ?>
 <!-- ═══════════════════════════════════════
      LOGIN SCREEN
