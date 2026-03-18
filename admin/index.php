@@ -1212,6 +1212,34 @@ function escHtml(str) {
   return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Hamburger menu ───────────────────────────────────────────
+
+const _hamburger = document.getElementById('navHamburger');
+const _navLinks  = document.getElementById('navLinks');
+
+_hamburger.addEventListener('click', () => {
+  const open = _navLinks.classList.toggle('open');
+  _hamburger.classList.toggle('open', open);
+  _hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+});
+
+// Close on nav item click
+_navLinks.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    _navLinks.classList.remove('open');
+    _hamburger.classList.remove('open');
+    _hamburger.setAttribute('aria-label', 'Open menu');
+  });
+});
+
+// Close on outside tap
+document.addEventListener('click', e => {
+  if (!_navLinks.contains(e.target) && e.target !== _hamburger && !_hamburger.contains(e.target)) {
+    _navLinks.classList.remove('open');
+    _hamburger.classList.remove('open');
+  }
+});
+
 // ── Init — load first page ────────────────────────────────────
 
 loadSettings();
