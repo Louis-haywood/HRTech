@@ -399,62 +399,6 @@ footer {
   color: var(--c-muted);
 }
 
-/* ── CREDITS ─────────────────────────────────────────────────── */
-.credits {
-  border-top: 1px solid var(--c-border);
-  padding: 1.25rem var(--gutter);
-  display: flex;
-  justify-content: center;
-}
-
-.credits-inner {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  text-decoration: none;
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-.credits-inner:hover { opacity: 1; }
-
-.credits-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.credits-text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.credits-label {
-  font-family: var(--f-mono);
-  font-size: var(--s-10);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--c-muted);
-}
-
-.credits-name {
-  font-family: var(--f-mono);
-  font-size: var(--s-13);
-  font-weight: 700;
-  color: var(--c-fg);
-  letter-spacing: 0.03em;
-}
-
-.credits-url {
-  font-family: var(--f-mono);
-  font-size: var(--s-11);
-  color: var(--c-accent);
-  letter-spacing: 0.04em;
-}
-
 /* ── HAMBURGER ───────────────────────────────────────────────── */
 .nav-hamburger {
   display: none;

@@ -900,5 +900,18 @@ loadSettings();
 </script>
 
 <?php endif; ?>
+
+  <!-- CREDITS -->
+  <div class="credits">
+    <a href="https://louishaywood.uk" target="_blank" rel="noopener" class="credits-inner">
+      <img src="https://louishaywood.uk/pfp.jpg" alt="Louis Haywood" class="credits-logo" />
+      <div class="credits-text">
+        <span class="credits-label">Designed &amp; Built by</span>
+        <span class="credits-name">Louis Haywood</span>
+        <span class="credits-url">louishaywood.uk</span>
+      </div>
+    </a>
+  </div>
+
 </body>
 </html>
