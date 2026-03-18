@@ -584,7 +584,7 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
   <div class="demo-banner">Preview — content subject to change</div>
 
   <nav id="navbar">
-    <span class="nav-brand">Harry <em>Richardson</em></span>
+    <span class="nav-brand">HR <em>Lighting</em></span>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
