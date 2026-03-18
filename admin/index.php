@@ -576,6 +576,31 @@ if (is_logged_in()) {
     </div>
   </div>
 
+  <!-- ── PORTFOLIO ── -->
+  <div class="page" id="page-portfolio">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">05</span>
+          <h2 class="section-title">Portfolio</h2>
+        </div>
+        <div class="alert" id="portfolioAlert"></div>
+
+        <div class="upload-zone" id="uploadZone">
+          <label for="photoFileInput">
+            <span class="upload-zone-label">Drag &amp; drop photos here, or click to select files</span>
+            <button type="button" class="btn btn-ghost" onclick="document.getElementById('photoFileInput').click()">Choose Photos</button>
+          </label>
+          <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
+        </div>
+
+        <div class="photo-grid" id="photoGrid">
+          <p style="color:var(--c-muted)">Loading…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── INBOX ── -->
   <div class="page" id="page-inbox">
     <div class="wrap">
@@ -715,7 +740,7 @@ document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
     document.getElementById('page-' + btn.dataset.page).classList.add('active');
 
     // Load data for the opened page
-    const loaders = { settings: loadSettings, services: loadServices, productions: loadProductions, skills: loadSkills, inbox: loadInbox };
+    const loaders = { settings: loadSettings, services: loadServices, productions: loadProductions, skills: loadSkills, portfolio: loadPortfolio, inbox: loadInbox };
     loaders[btn.dataset.page]?.();
   });
 });
@@ -739,7 +764,7 @@ async function api(action, data = {}) {
   Object.entries(data).forEach(([k, v]) => fd.append(k, v));
   const res  = await fetch('api.php', { method: 'POST', body: fd });
   const json = await res.json();
-  const contentActions = ['save_settings','save_service','delete_service','save_production','delete_production','save_skill','delete_skill'];
+  const contentActions = ['save_settings','save_service','delete_service','save_production','delete_production','save_skill','delete_skill','upload_photo','save_photo_caption','delete_photo'];
   if (json.success && contentActions.includes(action)) {
     _siteChannel.postMessage('reload');
   }
@@ -1058,6 +1083,95 @@ document.getElementById('changePassBtn').addEventListener('click', async () => {
   } else {
     showAlert('passwordAlert', res.error || 'Error updating password.', 'error');
   }
+});
+
+// ── PORTFOLIO ────────────────────────────────────────────────
+
+async function loadPortfolio() {
+  const photos = await apiGet('get_portfolio');
+  const grid = document.getElementById('photoGrid');
+  if (!photos.length) {
+    grid.innerHTML = '<p style="color:var(--c-muted)">No photos yet. Upload some above.</p>';
+    return;
+  }
+  grid.innerHTML = photos.map(p => `
+    <div class="photo-card" id="photo-${p.id}">
+      <img src="../uploads/${escHtml(p.filename)}" alt="${escHtml(p.caption)}" loading="lazy" />
+      <div class="photo-card-body">
+        <input class="photo-caption-input" type="text" placeholder="Caption (optional)"
+               value="${escHtml(p.caption)}" data-id="${p.id}" />
+        <div class="photo-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="saveCaption(${p.id})">Save</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePhoto(${p.id})">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveCaption(id) {
+  const input = document.querySelector(`.photo-caption-input[data-id="${id}"]`);
+  const res = await api('save_photo_caption', { id, caption: input.value });
+  if (res.success) showAlert('portfolioAlert', 'Caption saved.');
+  else showAlert('portfolioAlert', res.error || 'Error saving caption.', 'error');
+}
+
+async function deletePhoto(id) {
+  if (!confirm('Delete this photo permanently?')) return;
+  const res = await api('delete_photo', { id });
+  if (res.success) {
+    document.getElementById('photo-' + id)?.remove();
+    showAlert('portfolioAlert', 'Photo deleted.');
+    const grid = document.getElementById('photoGrid');
+    if (!grid.querySelector('.photo-card')) {
+      grid.innerHTML = '<p style="color:var(--c-muted)">No photos yet. Upload some above.</p>';
+    }
+  } else {
+    showAlert('portfolioAlert', res.error || 'Error deleting.', 'error');
+  }
+}
+
+async function uploadPhotos(files) {
+  if (!files.length) return;
+  const btn = document.querySelector('#uploadZone .btn');
+  btn.disabled = true; btn.textContent = 'Uploading…';
+
+  const fd = new FormData();
+  fd.append('action', 'upload_photo');
+  fd.append('csrf', CSRF);
+  Array.from(files).forEach(f => fd.append('photos[]', f));
+
+  try {
+    const res  = await fetch('api.php', { method: 'POST', body: fd });
+    const json = await res.json();
+    if (json.success) {
+      showAlert('portfolioAlert', `${json.ids.length} photo${json.ids.length !== 1 ? 's' : ''} uploaded.`);
+      loadPortfolio();
+      _siteChannel.postMessage('reload');
+    } else {
+      showAlert('portfolioAlert', json.error || 'Upload failed.', 'error');
+    }
+  } catch {
+    showAlert('portfolioAlert', 'Upload failed. Please try again.', 'error');
+  }
+
+  btn.disabled = false; btn.textContent = 'Choose Photos';
+  document.getElementById('photoFileInput').value = '';
+}
+
+// File input change
+document.getElementById('photoFileInput').addEventListener('change', e => {
+  uploadPhotos(e.target.files);
+});
+
+// Drag-and-drop
+const _uploadZone = document.getElementById('uploadZone');
+_uploadZone.addEventListener('dragover', e => { e.preventDefault(); _uploadZone.classList.add('drag-over'); });
+_uploadZone.addEventListener('dragleave', () => _uploadZone.classList.remove('drag-over'));
+_uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  _uploadZone.classList.remove('drag-over');
+  uploadPhotos(e.dataTransfer.files);
 });
 
 // ── XSS helper ───────────────────────────────────────────────
