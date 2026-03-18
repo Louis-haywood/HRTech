@@ -159,16 +159,6 @@ if (is_logged_in()) {
 
     /* Tags */
     .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-    .tag {
-      font-family: var(--f-mono);
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--c-muted);
-      border: 1px solid var(--c-border);
-      padding: 2px 8px;
-    }
 
     /* ── MODAL ───────────────────────────────────────────────────── */
     .modal-backdrop {
