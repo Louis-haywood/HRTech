@@ -50,7 +50,7 @@ switch ($action) {
 
     case 'get_settings':
         $rows = $db->query(
-            "SELECT key, value FROM settings WHERE key != 'admin_password' AND key != 'first_login'"
+            "SELECT `key`, value FROM settings WHERE `key` != 'admin_password' AND `key` != 'first_login'"
         )->fetchAll(PDO::FETCH_KEY_PAIR);
         json_response($rows);
 
@@ -61,7 +61,7 @@ switch ($action) {
             'stat_1_number', 'stat_1_label', 'stat_2_number', 'stat_2_label',
             'contact_address', 'contact_phone', 'contact_email',
         ];
-        $stmt = $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)");
+        $stmt = $db->prepare("REPLACE INTO settings (`key`, value) VALUES (?, ?)");
         foreach ($allowed as $key) {
             if (array_key_exists($key, $_POST)) {
                 $stmt->execute([$key, trim($_POST[$key])]);
@@ -72,17 +72,17 @@ switch ($action) {
     case 'change_password':
         $current = $_POST['current_password'] ?? '';
         $new     = $_POST['new_password']     ?? '';
-        $hash    = $db->query("SELECT value FROM settings WHERE key = 'admin_password'")->fetchColumn();
+        $hash    = $db->query("SELECT value FROM settings WHERE `key` = 'admin_password'")->fetchColumn();
         if (!password_verify($current, $hash)) {
             json_response(['error' => 'Current password is incorrect.'], 401);
         }
         if (strlen($new) < 6) {
             json_response(['error' => 'New password must be at least 6 characters.'], 422);
         }
-        $db->prepare("UPDATE settings SET value = ? WHERE key = 'admin_password'")->execute([
+        $db->prepare("UPDATE settings SET value = ? WHERE `key` = 'admin_password'")->execute([
             password_hash($new, PASSWORD_DEFAULT),
         ]);
-        $db->prepare("UPDATE settings SET value = '0' WHERE key = 'first_login'")->execute();
+        $db->prepare("UPDATE settings SET value = '0' WHERE `key` = 'first_login'")->execute();
         json_response(['success' => true]);
 
     // ── SERVICES ─────────────────────────────────────────────────────────────

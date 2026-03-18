@@ -7,7 +7,7 @@ function settings(): array {
     static $cache = null;
     if ($cache === null) {
         require_once __DIR__ . '/db.php';
-        $rows  = get_db()->query("SELECT key, value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $rows  = get_db()->query("SELECT `key`, value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
         $cache = $rows ?: [];
     }
     return $cache;
