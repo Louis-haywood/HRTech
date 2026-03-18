@@ -17,7 +17,7 @@ function setting(string $key, string $default = ''): string {
     return settings()[$key] ?? $default;
 }
 
-function json_response(mixed $data, int $status = 200): never {
+function json_response(mixed $data, int $status = 200): void {
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
