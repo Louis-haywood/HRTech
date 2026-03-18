@@ -73,36 +73,6 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     }
     .hero-cta:hover { letter-spacing: 0.1em; }
 
-    /* ── SECTION SHELL ───────────────────────────────────────────── */
-    .section-outer {
-      border-bottom: 1px solid var(--c-border);
-    }
-    .section-inner {
-      padding-block: var(--section-v);
-    }
-
-    .section-head {
-      display: flex;
-      align-items: baseline;
-      gap: 1.25rem;
-      margin-bottom: 2.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--c-border);
-    }
-    .section-num {
-      font-family: var(--f-mono);
-      font-size: var(--s-11);
-      color: var(--c-muted);
-      letter-spacing: 0.1em;
-    }
-    .section-title {
-      font-family: var(--f-display);
-      font-weight: 700;
-      font-size: var(--s-28);
-      letter-spacing: -0.01em;
-      line-height: 1;
-    }
-
     /* ── SERVICES ────────────────────────────────────────────────── */
     .service-row {
       display: grid;
@@ -173,17 +143,6 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       display: flex;
       flex-wrap: wrap;
       gap: 0.35rem;
-    }
-
-    .tag {
-      font-family: var(--f-mono);
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--c-muted);
-      border: 1px solid var(--c-border);
-      padding: 2px 8px;
     }
 
     .production-year {
