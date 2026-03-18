@@ -213,6 +213,52 @@ if (is_logged_in()) {
       display: inline-block; margin-right: 6px; flex-shrink: 0;
     }
 
+    /* ── PORTFOLIO ADMIN ─────────────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed var(--c-border);
+      padding: 2.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 2rem;
+    }
+    .upload-zone.drag-over {
+      border-color: var(--c-accent);
+      background: rgba(155,92,246,0.07);
+    }
+    .upload-zone-label {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .upload-zone input[type=file] { display: none; }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .photo-card {
+      border: 1px solid var(--c-border);
+      background: var(--c-surface);
+      overflow: hidden;
+    }
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-card-body { padding: 0.5rem; }
+    .photo-caption-input {
+      font-size: 0.6875rem;
+      padding: 0.35rem 0.5rem;
+      margin-bottom: 6px;
+    }
+    .photo-card-actions { display: flex; gap: 6px; }
+    .photo-card-actions .btn { flex: 1; justify-content: center; font-size: 0.6rem; padding: 0.3rem; }
+
     /* ── HAMBURGER ───────────────────────────────────────────────── */
     .nav-hamburger {
       display: none;
