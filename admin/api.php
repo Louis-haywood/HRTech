@@ -218,6 +218,84 @@ switch ($action) {
         bump_version($db);
         json_response(['success' => true]);
 
+    // ── PORTFOLIO ────────────────────────────────────────────────────────────
+
+    case 'get_portfolio':
+        json_response($db->query("SELECT * FROM portfolio ORDER BY sort_order, id")->fetchAll());
+
+    case 'upload_photo': {
+        $upload_dir = __DIR__ . '/../uploads/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+            // Block PHP execution in uploads
+            file_put_contents($upload_dir . '.htaccess', "php_flag engine off\nOptions -Indexes\n");
+        }
+
+        $files = $_FILES['photos'] ?? null;
+        if (!$files || empty($files['tmp_name'])) {
+            json_response(['error' => 'No files uploaded.'], 422);
+        }
+
+        // Normalise single file to same array shape as multiple
+        if (!is_array($files['tmp_name'])) {
+            foreach ($files as $k => $v) { $files[$k] = [$v]; }
+        }
+
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
+        $max     = (int)$db->query("SELECT COALESCE(MAX(sort_order),0) FROM portfolio")->fetchColumn();
+        $caption = trim($_POST['caption'] ?? '');
+        $ids     = [];
+
+        foreach ($files['tmp_name'] as $i => $tmp) {
+            if ($files['error'][$i] !== UPLOAD_ERR_OK) continue;
+            if (!is_uploaded_file($tmp)) continue;
+
+            $mime = mime_content_type($tmp);
+            if (!isset($allowed[$mime])) continue;
+
+            $filename = bin2hex(random_bytes(12)) . '.' . $allowed[$mime];
+            if (move_uploaded_file($tmp, $upload_dir . $filename)) {
+                $db->prepare("INSERT INTO portfolio (filename, caption, sort_order) VALUES (?,?,?)")
+                   ->execute([$filename, $caption, ++$max]);
+                $ids[] = (int)$db->lastInsertId();
+            }
+        }
+
+        if (empty($ids)) {
+            json_response(['error' => 'No valid images were uploaded. Allowed types: JPG, PNG, WebP, GIF.'], 422);
+        }
+
+        bump_version($db);
+        json_response(['success' => true, 'ids' => $ids]);
+    }
+
+    case 'save_photo_caption': {
+        $id      = (int)($_POST['id'] ?? 0);
+        $caption = trim($_POST['caption'] ?? '');
+        if ($id) {
+            $db->prepare("UPDATE portfolio SET caption = ? WHERE id = ?")->execute([$caption, $id]);
+        }
+        bump_version($db);
+        json_response(['success' => true]);
+    }
+
+    case 'delete_photo': {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $row = $db->prepare("SELECT filename FROM portfolio WHERE id = ?")->execute([$id]) ? null : null;
+            $stmt = $db->prepare("SELECT filename FROM portfolio WHERE id = ?");
+            $stmt->execute([$id]);
+            $row = $stmt->fetch();
+            if ($row) {
+                $path = __DIR__ . '/../uploads/' . basename($row['filename']);
+                if (file_exists($path)) unlink($path);
+            }
+            $db->prepare("DELETE FROM portfolio WHERE id = ?")->execute([$id]);
+        }
+        bump_version($db);
+        json_response(['success' => true]);
+    }
+
     // ── SUBMISSIONS ──────────────────────────────────────────────────────────
 
     case 'get_submissions':

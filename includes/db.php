@@ -21,6 +21,15 @@ function get_db(): PDO {
 }
 
 function init_db(PDO $db): void {
+    // Create portfolio table if it doesn't exist yet
+    $db->exec("CREATE TABLE IF NOT EXISTS portfolio (
+        id         INT AUTO_INCREMENT PRIMARY KEY,
+        filename   VARCHAR(255) NOT NULL,
+        caption    VARCHAR(255) NOT NULL DEFAULT '',
+        sort_order INT          NOT NULL DEFAULT 0,
+        created_at TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
     // Seed on first run
     $count = $db->query("SELECT COUNT(*) FROM settings")->fetchColumn();
     if ((int)$count === 0) {

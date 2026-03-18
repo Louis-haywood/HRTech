@@ -9,6 +9,7 @@ $s           = settings();
 $services    = $db->query("SELECT * FROM services    ORDER BY sort_order")->fetchAll();
 $productions = $db->query("SELECT * FROM productions ORDER BY sort_order")->fetchAll();
 $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetchAll();
+$portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -149,6 +150,60 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       color: var(--c-border);
       line-height: 1;
       text-align: right;
+    }
+
+    /* ── PORTFOLIO ───────────────────────────────────────────────── */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--c-border);
+    }
+
+    .portfolio-item {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--c-surface);
+    }
+
+    .portfolio-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .portfolio-item:hover img { transform: scale(1.05); }
+
+    .portfolio-caption {
+      position: absolute;
+      inset: 0;
+      background: rgba(13,13,18,0.75);
+      display: flex;
+      align-items: flex-end;
+      padding: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .portfolio-item:hover .portfolio-caption { opacity: 1; }
+
+    .portfolio-caption span {
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-fg);
+      line-height: 1.3;
+    }
+
+    @media (max-width: 860px) {
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .portfolio-grid { grid-template-columns: 1fr; }
     }
 
     /* ── ABOUT ───────────────────────────────────────────────────── */
@@ -403,6 +458,7 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
+      <?php if ($portfolio): ?><li><a href="#portfolio">Portfolio</a></li><?php endif; ?>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -475,12 +531,36 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     </div>
   </div>
 
+  <?php if ($portfolio): ?>
+  <!-- PORTFOLIO -->
+  <div class="section-outer" id="portfolio">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">03</span>
+          <h2 class="section-title">Portfolio</h2>
+        </div>
+        <div class="portfolio-grid">
+          <?php foreach ($portfolio as $photo): ?>
+            <div class="portfolio-item">
+              <img src="../uploads/<?= esc($photo['filename']) ?>" alt="<?= esc($photo['caption']) ?>" loading="lazy" />
+              <?php if ($photo['caption']): ?>
+                <div class="portfolio-caption"><span><?= esc($photo['caption']) ?></span></div>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- ABOUT -->
   <div class="section-outer" id="about">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
-          <span class="section-num eyebrow">03</span>
+          <span class="section-num eyebrow"><?= $portfolio ? '04' : '03' ?></span>
           <h2 class="section-title">About</h2>
         </div>
         <div class="about-grid">
@@ -538,7 +618,7 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
-          <span class="section-num eyebrow">04</span>
+          <span class="section-num eyebrow"><?= $portfolio ? '05' : '04' ?></span>
           <h2 class="section-title">Contact</h2>
         </div>
         <div class="contact-grid">
@@ -616,6 +696,7 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     <ul class="footer-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
+      <?php if ($portfolio): ?><li><a href="#portfolio">Portfolio</a></li><?php endif; ?>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>

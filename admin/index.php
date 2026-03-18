@@ -365,6 +365,7 @@ if (is_logged_in()) {
       <li><button class="nav-item" data-page="services">Services</button></li>
       <li><button class="nav-item" data-page="productions">Productions</button></li>
       <li><button class="nav-item" data-page="skills">Skills</button></li>
+      <li><button class="nav-item" data-page="portfolio">Portfolio</button></li>
       <li><button class="nav-item" data-page="inbox">Inbox<?php if ($unread_count > 0): ?><span class="badge"><?= $unread_count ?></span><?php endif; ?></button></li>
       <li><button class="nav-item" data-page="password">Password</button></li>
       <li><button class="nav-item" id="logoutBtn">Sign Out</button></li>
@@ -534,7 +535,7 @@ if (is_logged_in()) {
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
-          <span class="section-num eyebrow">05</span>
+          <span class="section-num eyebrow">06</span>
           <h2 class="section-title">Inbox</h2>
         </div>
         <div class="alert" id="inboxAlert"></div>
@@ -550,7 +551,7 @@ if (is_logged_in()) {
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
-          <span class="section-num eyebrow">06</span>
+          <span class="section-num eyebrow">07</span>
           <h2 class="section-title">Change Password</h2>
         </div>
         <div class="alert" id="passwordAlert"></div>
