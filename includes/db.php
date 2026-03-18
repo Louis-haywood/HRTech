@@ -46,7 +46,7 @@ function seed_defaults(PDO $db): void {
         'contact_phone'   => '07305 598 139',
         'contact_email'   => 'HarrysLighting@outlook.com',
         // Temporary password — admin is prompted to change this on first login
-        'admin_password'  => password_hash('hrls2026', PASSWORD_DEFAULT),
+        'admin_password'  => password_hash('Harry', PASSWORD_DEFAULT),
         'first_login'     => '1',
     ];
 
