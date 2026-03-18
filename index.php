@@ -24,13 +24,16 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
 
   <nav id="navbar">
     <span class="nav-brand">HR <em>Lighting</em></span>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
       <?php if ($portfolio): ?><li><a href="#portfolio">Portfolio</a></li><?php endif; ?>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- HERO -->
@@ -273,6 +276,31 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   </footer>
 
   <script>
+    // Hamburger menu
+    const _hamburger = document.getElementById('navHamburger');
+    const _navLinks  = document.getElementById('navLinks');
+
+    _hamburger.addEventListener('click', () => {
+      const open = _navLinks.classList.toggle('open');
+      _hamburger.classList.toggle('open', open);
+      _hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    });
+
+    _navLinks.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        _navLinks.classList.remove('open');
+        _hamburger.classList.remove('open');
+        _hamburger.setAttribute('aria-label', 'Open menu');
+      });
+    });
+
+    document.addEventListener('click', e => {
+      if (!_navLinks.contains(e.target) && e.target !== _hamburger && !_hamburger.contains(e.target)) {
+        _navLinks.classList.remove('open');
+        _hamburger.classList.remove('open');
+      }
+    });
+
     // Active nav on scroll
     const navLinks = document.querySelectorAll('nav a[href^="#"]');
     const sections = document.querySelectorAll('[id]');
