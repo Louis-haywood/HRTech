@@ -44,6 +44,11 @@ if ($method === 'POST' && $action !== 'login') {
 
 $db = get_db();
 
+function bump_version(PDO $db): void {
+    $db->prepare("REPLACE INTO settings (`key`, value) VALUES ('last_updated', ?)")
+       ->execute([(string)time()]);
+}
+
 switch ($action) {
 
     // ── SETTINGS ─────────────────────────────────────────────────────────────
@@ -67,6 +72,7 @@ switch ($action) {
                 $stmt->execute([$key, trim($_POST[$key])]);
             }
         }
+        bump_version($db);
         json_response(['success' => true]);
 
     case 'change_password':
@@ -118,6 +124,7 @@ switch ($action) {
             )->execute([$icon, $title, $body, $featured, $max + 1]);
             $id = (int)$db->lastInsertId();
         }
+        bump_version($db);
         json_response(['success' => true, 'id' => $id]);
     }
 
@@ -126,6 +133,7 @@ switch ($action) {
         if ($id) {
             $db->prepare("DELETE FROM services WHERE id = ?")->execute([$id]);
         }
+        bump_version($db);
         json_response(['success' => true]);
 
     // ── PRODUCTIONS ──────────────────────────────────────────────────────────
@@ -165,6 +173,7 @@ switch ($action) {
             )->execute([$title, $venue, $year, $tags_json, $max + 1]);
             $id = (int)$db->lastInsertId();
         }
+        bump_version($db);
         json_response(['success' => true, 'id' => $id]);
     }
 
@@ -173,6 +182,7 @@ switch ($action) {
         if ($id) {
             $db->prepare("DELETE FROM productions WHERE id = ?")->execute([$id]);
         }
+        bump_version($db);
         json_response(['success' => true]);
 
     // ── SKILLS ───────────────────────────────────────────────────────────────
@@ -196,6 +206,7 @@ switch ($action) {
             $db->prepare("INSERT INTO skills (name, sort_order) VALUES (?,?)")->execute([$name, $max + 1]);
             $id = (int)$db->lastInsertId();
         }
+        bump_version($db);
         json_response(['success' => true, 'id' => $id]);
     }
 
@@ -204,6 +215,7 @@ switch ($action) {
         if ($id) {
             $db->prepare("DELETE FROM skills WHERE id = ?")->execute([$id]);
         }
+        bump_version($db);
         json_response(['success' => true]);
 
     // ── SUBMISSIONS ──────────────────────────────────────────────────────────
