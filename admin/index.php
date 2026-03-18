@@ -18,12 +18,27 @@ if (is_logged_in()) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — HR Lighting Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --c-bg:           #0D0D12;
+      --c-surface:      #1A1525;
+      --c-fg:           #FFFFFF;
+      --c-accent:       #9B5CF6;
+      --c-accent-light: #C084FC;
+      --c-muted:        #9D9DB8;
+      --c-border:       rgba(155, 92, 246, 0.2);
+
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-mono:    'Space Mono', 'Courier New', monospace;
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, 'Inter', BlinkMacSystemFont, sans-serif;
-      background: #0d0d12;
+      font-family: var(--f-mono);
+      background: var(--c-bg);
       color: #fff;
       min-height: 100vh;
     }
@@ -40,7 +55,7 @@ if (is_logged_in()) {
     }
 
     .login-box {
-      background: #1a1525;
+      background: var(--c-surface);
       border: 1px solid rgba(155,92,246,0.3);
       border-radius: 12px;
       padding: 48px 40px;
@@ -49,13 +64,13 @@ if (is_logged_in()) {
     }
 
     .login-box h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-    .login-box p  { font-size: 14px; color: #9d9db8; margin-bottom: 32px; }
+    .login-box p  { font-size: 14px; color: var(--c-muted); margin-bottom: 32px; }
 
-    .login-box label { display: block; font-size: 12px; font-weight: 600; color: #9d9db8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .login-box label { display: block; font-size: 12px; font-weight: 600; color: var(--c-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
 
     .login-box input {
       width: 100%;
-      background: #0d0d12;
+      background: var(--c-bg);
       border: 1px solid rgba(155,92,246,0.25);
       border-radius: 8px;
       color: #fff;
@@ -66,7 +81,7 @@ if (is_logged_in()) {
       font-family: inherit;
       transition: border-color 0.2s;
     }
-    .login-box input:focus { border-color: #9b5cf6; }
+    .login-box input:focus { border-color: var(--c-accent); }
 
     .login-error {
       background: rgba(239,68,68,0.1);
@@ -86,7 +101,7 @@ if (is_logged_in()) {
     .sidebar {
       width: 220px;
       min-height: 100vh;
-      background: #1a1525;
+      background: var(--c-surface);
       border-right: 1px solid rgba(155,92,246,0.2);
       display: flex;
       flex-direction: column;
@@ -102,8 +117,8 @@ if (is_logged_in()) {
       font-weight: 800;
       border-bottom: 1px solid rgba(155,92,246,0.15);
     }
-    .sidebar-logo span { color: #9b5cf6; }
-    .sidebar-logo small { display: block; font-size: 11px; font-weight: 400; color: #9d9db8; margin-top: 2px; }
+    .sidebar-logo span { color: var(--c-accent); }
+    .sidebar-logo small { display: block; font-size: 11px; font-weight: 400; color: var(--c-muted); margin-top: 2px; }
 
     .sidebar-nav { flex: 1; padding: 16px 0; }
 
@@ -114,7 +129,7 @@ if (is_logged_in()) {
       padding: 11px 20px;
       font-size: 14px;
       font-weight: 500;
-      color: #9d9db8;
+      color: var(--c-muted);
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
       border: none;
@@ -130,14 +145,14 @@ if (is_logged_in()) {
       position: absolute;
       left: 0; top: 0; bottom: 0;
       width: 3px;
-      background: #9b5cf6;
+      background: var(--c-accent);
       border-radius: 0 2px 2px 0;
     }
 
     .nav-icon { font-size: 16px; width: 20px; text-align: center; }
 
     .badge {
-      background: #9b5cf6;
+      background: var(--c-accent);
       color: #fff;
       font-size: 10px;
       font-weight: 700;
@@ -156,7 +171,7 @@ if (is_logged_in()) {
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      color: #9d9db8;
+      color: var(--c-muted);
       cursor: pointer;
       background: none;
       border: none;
@@ -189,11 +204,11 @@ if (is_logged_in()) {
       flex-wrap: wrap;
     }
     .page-header h1 { font-size: 24px; font-weight: 800; }
-    .page-header p  { font-size: 14px; color: #9d9db8; margin-top: 4px; }
+    .page-header p  { font-size: 14px; color: var(--c-muted); margin-top: 4px; }
 
     /* ── FORMS & INPUTS ──────────────────────────────────── */
     .card {
-      background: #1a1525;
+      background: var(--c-surface);
       border: 1px solid rgba(155,92,246,0.2);
       border-radius: 10px;
       padding: 28px;
@@ -215,14 +230,14 @@ if (is_logged_in()) {
     label, .field-label {
       font-size: 12px;
       font-weight: 600;
-      color: #9d9db8;
+      color: var(--c-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     input[type=text], input[type=email], input[type=tel],
     input[type=number], input[type=password], textarea, select {
-      background: #0d0d12;
+      background: var(--c-bg);
       border: 1px solid rgba(155,92,246,0.2);
       border-radius: 8px;
       color: #fff;
@@ -235,7 +250,7 @@ if (is_logged_in()) {
       -webkit-appearance: none;
       appearance: none;
     }
-    input:focus, textarea:focus, select:focus { border-color: #9b5cf6; }
+    input:focus, textarea:focus, select:focus { border-color: var(--c-accent); }
     input::placeholder, textarea::placeholder { color: #4a4a6a; }
     textarea { resize: vertical; min-height: 90px; }
 
@@ -255,13 +270,13 @@ if (is_logged_in()) {
     }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .btn-primary { background: #9b5cf6; color: #fff; }
+    .btn-primary { background: var(--c-accent); color: #fff; }
     .btn-primary:hover:not(:disabled) { background: #7c3aed; }
 
     .btn-danger  { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
     .btn-danger:hover:not(:disabled)  { background: rgba(239,68,68,0.25); }
 
-    .btn-ghost   { background: rgba(155,92,246,0.1); color: #c084fc; }
+    .btn-ghost   { background: rgba(155,92,246,0.1); color: var(--c-accent-light); }
     .btn-ghost:hover:not(:disabled)   { background: rgba(155,92,246,0.2); }
 
     .btn-sm { padding: 6px 12px; font-size: 13px; }
@@ -282,7 +297,7 @@ if (is_logged_in()) {
     .item-list { display: flex; flex-direction: column; gap: 12px; }
 
     .item-card {
-      background: #0d0d12;
+      background: var(--c-bg);
       border: 1px solid rgba(155,92,246,0.15);
       border-radius: 8px;
       padding: 16px 20px;
@@ -292,14 +307,14 @@ if (is_logged_in()) {
     }
     .item-card-info { flex: 1; min-width: 0; }
     .item-card-info strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .item-card-info span  { font-size: 13px; color: #9d9db8; }
+    .item-card-info span  { font-size: 13px; color: var(--c-muted); }
     .item-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
     /* Tags display */
     .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .tag {
       background: rgba(155,92,246,0.15);
-      color: #c084fc;
+      color: var(--c-accent-light);
       padding: 2px 10px;
       border-radius: 999px;
       font-size: 12px;
@@ -320,7 +335,7 @@ if (is_logged_in()) {
     .modal-backdrop.open { display: flex; }
 
     .modal {
-      background: #1a1525;
+      background: var(--c-surface);
       border: 1px solid rgba(155,92,246,0.3);
       border-radius: 12px;
       padding: 32px;
@@ -333,7 +348,7 @@ if (is_logged_in()) {
       position: absolute;
       top: 16px; right: 20px;
       background: none; border: none;
-      font-size: 20px; color: #9d9db8;
+      font-size: 20px; color: var(--c-muted);
       cursor: pointer; line-height: 1;
     }
     .modal-close:hover { color: #fff; }
@@ -341,21 +356,21 @@ if (is_logged_in()) {
 
     /* ── INBOX ───────────────────────────────────────────── */
     .submission {
-      background: #0d0d12;
+      background: var(--c-bg);
       border: 1px solid rgba(155,92,246,0.15);
       border-radius: 10px;
       padding: 20px;
       margin-bottom: 12px;
       position: relative;
     }
-    .submission.unread { border-left: 3px solid #9b5cf6; }
+    .submission.unread { border-left: 3px solid var(--c-accent); }
     .submission-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
     .submission-meta strong { font-size: 15px; font-weight: 700; }
-    .submission-meta span  { font-size: 13px; color: #9d9db8; }
+    .submission-meta span  { font-size: 13px; color: var(--c-muted); }
     .submission p { font-size: 14px; color: #d1d1e0; line-height: 1.65; white-space: pre-wrap; }
     .submission-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
     .unread-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #9b5cf6;
+      width: 8px; height: 8px; border-radius: 50%; background: var(--c-accent);
       display: inline-block; margin-right: 6px;
     }
 
@@ -454,25 +469,25 @@ if (is_logged_in()) {
 
     <nav class="sidebar-nav">
       <button class="nav-item active" data-page="settings">
-        <span class="nav-icon">⚙️</span> Site Settings
+        Site Settings
       </button>
       <button class="nav-item" data-page="services">
-        <span class="nav-icon">💡</span> Services
+        Services
       </button>
       <button class="nav-item" data-page="productions">
-        <span class="nav-icon">🎭</span> Productions
+        Productions
       </button>
       <button class="nav-item" data-page="skills">
-        <span class="nav-icon">🔧</span> Skills
+        Skills
       </button>
       <button class="nav-item" data-page="inbox">
-        <span class="nav-icon">📬</span> Inbox
+        Inbox
         <?php if ($unread_count > 0): ?>
           <span class="badge"><?= $unread_count ?></span>
         <?php endif; ?>
       </button>
       <button class="nav-item" data-page="password">
-        <span class="nav-icon">🔑</span> Password
+        Password
       </button>
     </nav>
 
@@ -589,7 +604,7 @@ if (is_logged_in()) {
       </div>
       <div class="alert" id="servicesAlert"></div>
       <div class="item-list" id="servicesList">
-        <p style="color:#9d9db8">Loading…</p>
+        <p style="color:var(--c-muted)">Loading…</p>
       </div>
     </div>
 
@@ -604,7 +619,7 @@ if (is_logged_in()) {
       </div>
       <div class="alert" id="productionsAlert"></div>
       <div class="item-list" id="productionsList">
-        <p style="color:#9d9db8">Loading…</p>
+        <p style="color:var(--c-muted)">Loading…</p>
       </div>
     </div>
 
@@ -619,7 +634,7 @@ if (is_logged_in()) {
       </div>
       <div class="alert" id="skillsAlert"></div>
       <div class="item-list" id="skillsList">
-        <p style="color:#9d9db8">Loading…</p>
+        <p style="color:var(--c-muted)">Loading…</p>
       </div>
     </div>
 
@@ -633,7 +648,7 @@ if (is_logged_in()) {
       </div>
       <div class="alert" id="inboxAlert"></div>
       <div id="inboxList">
-        <p style="color:#9d9db8">Loading…</p>
+        <p style="color:var(--c-muted)">Loading…</p>
       </div>
     </div>
 
@@ -722,7 +737,7 @@ if (is_logged_in()) {
     <div class="form-group">
       <label>Your Roles (comma-separated)</label>
       <input type="text" id="prod_tags" placeholder="e.g. LD, Operator, Technical DSM" />
-      <span style="font-size:12px;color:#9d9db8;margin-top:4px;">Separate each role with a comma</span>
+      <span style="font-size:12px;color:var(--c-muted);margin-top:4px;">Separate each role with a comma</span>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('productionModal')">Cancel</button>
@@ -857,7 +872,7 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
 async function loadServices() {
   const services = await apiGet('get_services');
   const list = document.getElementById('servicesList');
-  if (!services.length) { list.innerHTML = '<p style="color:#9d9db8">No services yet. Click Add Service.</p>'; return; }
+  if (!services.length) { list.innerHTML = '<p style="color:var(--c-muted)">No services yet. Click Add Service.</p>'; return; }
   list.innerHTML = services.map(s => `
     <div class="item-card">
       <span style="font-size:24px">${s.icon}</span>
@@ -920,7 +935,7 @@ async function deleteService(id, title) {
 async function loadProductions() {
   const prods = await apiGet('get_productions');
   const list  = document.getElementById('productionsList');
-  if (!prods.length) { list.innerHTML = '<p style="color:#9d9db8">No productions yet. Click Add Production.</p>'; return; }
+  if (!prods.length) { list.innerHTML = '<p style="color:var(--c-muted)">No productions yet. Click Add Production.</p>'; return; }
   list.innerHTML = prods.map(p => `
     <div class="item-card">
       <div style="font-size:22px;font-weight:800;color:rgba(155,92,246,0.4);min-width:52px;text-align:center">${p.year}</div>
@@ -984,7 +999,7 @@ async function deleteProduction(id, title) {
 async function loadSkills() {
   const skills = await apiGet('get_skills');
   const list   = document.getElementById('skillsList');
-  if (!skills.length) { list.innerHTML = '<p style="color:#9d9db8">No skills yet. Click Add Skill.</p>'; return; }
+  if (!skills.length) { list.innerHTML = '<p style="color:var(--c-muted)">No skills yet. Click Add Skill.</p>'; return; }
   list.innerHTML = skills.map(s => `
     <div class="item-card">
       <div class="item-card-info">
@@ -1037,7 +1052,7 @@ async function loadInbox() {
   const subs = await apiGet('get_submissions');
   const list = document.getElementById('inboxList');
   if (!subs.length) {
-    list.innerHTML = '<div class="card" style="text-align:center;color:#9d9db8;padding:48px">No enquiries yet. When someone fills in your contact form, they\'ll appear here.</div>';
+    list.innerHTML = '<div class="card" style="text-align:center;color:var(--c-muted);padding:48px">No enquiries yet. When someone fills in your contact form, they\'ll appear here.</div>';
     return;
   }
   list.innerHTML = subs.map(s => `
