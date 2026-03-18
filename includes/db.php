@@ -1,5 +1,5 @@
 <?php
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'auth-db1943.hstgr.io');
 define('DB_NAME', 'u463907152_HRTech');
 define('DB_USER', 'u463907152_HRTech');
 define('DB_PASS', 'Harry2026!');
