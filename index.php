@@ -18,7 +18,6 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
   <title><?= esc(setting('site_name')) ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
     textarea { min-height: 130px; }

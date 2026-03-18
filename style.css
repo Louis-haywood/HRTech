@@ -1,3 +1,6 @@
+/* ── FONTS ───────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700;1,9..144,900&family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
 /* ── DESIGN TOKENS ───────────────────────────────────────────── */
 :root {
   --c-bg:           #0D0D12;
@@ -8,8 +11,8 @@
   --c-muted:        #9D9DB8;
   --c-border:       rgba(155, 92, 246, 0.2);
 
-  --f-display: 'Playfair Display', Georgia, serif;
-  --f-mono:    'Space Mono', 'Courier New', monospace;
+  --f-display: 'Fraunces', Georgia, serif;
+  --f-mono:    'IBM Plex Mono', 'Courier New', monospace;
 
   /* type scale */
   --s-10:   0.625rem;
