@@ -21,152 +21,13 @@ if (is_logged_in()) {
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
   <style>
-    /* ── DESIGN TOKENS ───────────────────────────────────────────── */
-    :root {
-      --c-bg:           #0D0D12;
-      --c-surface:      #1A1525;
-      --c-fg:           #FFFFFF;
-      --c-accent:       #9B5CF6;
-      --c-accent-light: #C084FC;
-      --c-muted:        #9D9DB8;
-      --c-border:       rgba(155, 92, 246, 0.2);
-
-      --f-display: 'Playfair Display', Georgia, serif;
-      --f-mono:    'Space Mono', 'Courier New', monospace;
-
-      --max-w:     1160px;
-      --gutter:    clamp(1.25rem, 5vw, 3.5rem);
-      --section-v: clamp(3.5rem, 7vw, 6rem);
-
-      --banner-h: 33px;
-      --nav-h:    52px;
-    }
-
-    /* ── RESET ───────────────────────────────────────────────────── */
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--f-mono);
-      font-size: 0.9375rem;
-      background: var(--c-bg);
-      color: var(--c-fg);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    a  { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-
-    /* ── SHARED ──────────────────────────────────────────────────── */
-    .wrap {
-      max-width: var(--max-w);
-      margin-inline: auto;
-      padding-inline: var(--gutter);
-    }
-
-    .eyebrow {
-      font-family: var(--f-mono);
-      font-size: 0.6875rem;
-      font-weight: 700;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: var(--c-muted);
-    }
-
-    /* ── DEMO BANNER ─────────────────────────────────────────────── */
-    .demo-banner {
-      position: sticky;
-      top: 0;
-      z-index: 300;
-      background: var(--c-surface);
-      color: var(--c-accent);
-      font-family: var(--f-mono);
-      font-size: 0.6875rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-align: center;
-      padding: 8px;
-      height: var(--banner-h);
-    }
-
-    /* ── NAV ─────────────────────────────────────────────────────── */
-    nav {
-      position: sticky;
-      top: var(--banner-h);
-      z-index: 200;
-      height: var(--nav-h);
-      background: var(--c-bg);
-      border-bottom: 1px solid var(--c-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-inline: var(--gutter);
-    }
-
-    .nav-brand {
-      font-family: var(--f-mono);
-      font-size: 0.8125rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .nav-brand em { font-style: normal; color: var(--c-accent); }
-
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links button.nav-item {
-      font-family: var(--f-mono);
-      font-size: 0.8125rem;
-      color: var(--c-muted);
-      letter-spacing: 0.04em;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      transition: color 0.15s;
-    }
-    .nav-links button.nav-item:hover,
-    .nav-links button.nav-item.active { color: var(--c-fg); }
-
-    .badge {
-      background: var(--c-accent);
-      color: #fff;
-      font-size: 0.625rem;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 999px;
-      margin-left: 4px;
-      vertical-align: middle;
-    }
+    textarea { min-height: 90px; }
 
     /* ── PAGES / SECTIONS ────────────────────────────────────────── */
     .page { display: none; border-bottom: 1px solid var(--c-border); }
     .page.active { display: block; }
-
-    .section-inner { padding-block: var(--section-v); }
-
-    .section-head {
-      display: flex;
-      align-items: baseline;
-      gap: 1.25rem;
-      margin-bottom: 2.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--c-border);
-      flex-wrap: wrap;
-    }
-    .section-num {
-      font-family: var(--f-mono);
-      font-size: 0.6875rem;
-      color: var(--c-muted);
-      letter-spacing: 0.1em;
-    }
-    .section-title {
-      font-family: var(--f-display);
-      font-weight: 700;
-      font-size: 1.75rem;
-      letter-spacing: -0.01em;
-      line-height: 1;
-    }
     .section-head-action { margin-left: auto; }
 
     /* ── LOGIN ───────────────────────────────────────────────────── */
@@ -238,36 +99,6 @@ if (is_logged_in()) {
     .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
     .form-group:last-child { margin-bottom: 0; }
     .form-group.full { grid-column: 1 / -1; }
-
-    label, .field-label {
-      font-family: var(--f-mono);
-      font-size: 0.6875rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--c-muted);
-    }
-
-    input[type=text], input[type=email], input[type=tel],
-    input[type=number], input[type=password], textarea, select {
-      background: transparent;
-      border: 1px solid var(--c-border);
-      border-radius: 0;
-      color: var(--c-fg);
-      font-family: var(--f-mono);
-      font-size: 0.8125rem;
-      padding: 0.75rem 0.875rem;
-      outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    input:focus, textarea:focus, select:focus { border-color: var(--c-muted); }
-    input::placeholder, textarea::placeholder { color: var(--c-muted); opacity: 0.4; }
-    select { cursor: pointer; }
-    select option { background: var(--c-bg); }
-    textarea { resize: vertical; min-height: 90px; }
 
     /* ── BUTTONS ─────────────────────────────────────────────────── */
     .btn {

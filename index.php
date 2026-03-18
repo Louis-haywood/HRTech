@@ -285,35 +285,6 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
     .field { display: flex; flex-direction: column; gap: 0.4rem; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-    label {
-      font-family: var(--f-mono);
-      font-size: var(--s-11);
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--c-muted);
-    }
-
-    input, select, textarea {
-      width: 100%;
-      background: transparent;
-      border: 1px solid var(--c-border);
-      border-radius: 0;
-      color: var(--c-fg);
-      font-family: var(--f-mono);
-      font-size: var(--s-13);
-      padding: 0.75rem 0.875rem;
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-      transition: border-color 0.15s;
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--c-muted); }
-    input::placeholder, textarea::placeholder { color: var(--c-muted); opacity: 0.4; }
-    select { cursor: pointer; }
-    select option { background: var(--c-bg); }
-    textarea { resize: vertical; min-height: 130px; }
-
     .submit-btn {
       font-family: var(--f-mono);
       font-size: var(--s-13);
