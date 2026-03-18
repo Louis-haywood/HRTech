@@ -1,61 +1,22 @@
 <?php
-define('DB_PATH', __DIR__ . '/../data/hrls.db');
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u463907152_HRTech');
+define('DB_USER', 'u463907152_HRTech');
+define('DB_PASS', 'Harry2026!');
 
 function get_db(): PDO {
     static $db = null;
     if ($db === null) {
-        $db = new PDO('sqlite:' . DB_PATH);
+        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+        $db = new PDO($dsn, DB_USER, DB_PASS);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        $db->exec('PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;');
         init_db($db);
     }
     return $db;
 }
 
 function init_db(PDO $db): void {
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS settings (
-            key   TEXT PRIMARY KEY,
-            value TEXT NOT NULL DEFAULT ''
-        );
-
-        CREATE TABLE IF NOT EXISTS services (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            icon       TEXT    NOT NULL DEFAULT '💡',
-            title      TEXT    NOT NULL,
-            body       TEXT    NOT NULL DEFAULT '',
-            featured   INTEGER NOT NULL DEFAULT 0
-        );
-
-        CREATE TABLE IF NOT EXISTS productions (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            title      TEXT    NOT NULL,
-            venue      TEXT    NOT NULL DEFAULT '',
-            year       INTEGER NOT NULL DEFAULT 2024,
-            tags       TEXT    NOT NULL DEFAULT '[]'
-        );
-
-        CREATE TABLE IF NOT EXISTS skills (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            sort_order INTEGER NOT NULL DEFAULT 0,
-            name       TEXT    NOT NULL
-        );
-
-        CREATE TABLE IF NOT EXISTS submissions (
-            id           INTEGER  PRIMARY KEY AUTOINCREMENT,
-            name         TEXT     NOT NULL,
-            email        TEXT     NOT NULL,
-            phone        TEXT     NOT NULL DEFAULT '',
-            project_type TEXT     NOT NULL DEFAULT '',
-            message      TEXT     NOT NULL,
-            submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            is_read      INTEGER  NOT NULL DEFAULT 0
-        );
-    ");
-
     // Seed on first run
     $count = $db->query("SELECT COUNT(*) FROM settings")->fetchColumn();
     if ((int)$count === 0) {
@@ -85,7 +46,7 @@ function seed_defaults(PDO $db): void {
         'first_login'     => '1',
     ];
 
-    $stmt = $db->prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
+    $stmt = $db->prepare("INSERT INTO settings (`key`, value) VALUES (?, ?)");
     foreach ($settings as $k => $v) {
         $stmt->execute([$k, $v]);
     }
