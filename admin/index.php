@@ -22,6 +22,7 @@ if (is_logged_in()) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <style>
+    /* ── DESIGN TOKENS ───────────────────────────────────────────── */
     :root {
       --c-bg:           #0D0D12;
       --c-surface:      #1A1525;
@@ -33,243 +34,261 @@ if (is_logged_in()) {
 
       --f-display: 'Playfair Display', Georgia, serif;
       --f-mono:    'Space Mono', 'Courier New', monospace;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+      --max-w:     1160px;
+      --gutter:    clamp(1.25rem, 5vw, 3.5rem);
+      --section-v: clamp(3.5rem, 7vw, 6rem);
+
+      --banner-h: 33px;
+      --nav-h:    52px;
+    }
+
+    /* ── RESET ───────────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: var(--f-mono);
+      font-size: 0.9375rem;
       background: var(--c-bg);
-      color: #fff;
-      min-height: 100vh;
+      color: var(--c-fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a  { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ── SHARED ──────────────────────────────────────────────────── */
+    .wrap {
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
     }
 
-    a { color: inherit; text-decoration: none; }
+    .eyebrow {
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+    }
 
-    /* ── LOGIN ───────────────────────────────────────────── */
-    .login-wrap {
-      min-height: 100vh;
+    /* ── DEMO BANNER ─────────────────────────────────────────────── */
+    .demo-banner {
+      position: sticky;
+      top: 0;
+      z-index: 300;
+      background: var(--c-surface);
+      color: var(--c-accent);
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px;
+      height: var(--banner-h);
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: var(--banner-h);
+      z-index: 200;
+      height: var(--nav-h);
+      background: var(--c-bg);
+      border-bottom: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-inline: var(--gutter);
+    }
+
+    .nav-brand {
+      font-family: var(--f-mono);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .nav-brand em { font-style: normal; color: var(--c-accent); }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links button.nav-item {
+      font-family: var(--f-mono);
+      font-size: 0.8125rem;
+      color: var(--c-muted);
+      letter-spacing: 0.04em;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+    .nav-links button.nav-item:hover,
+    .nav-links button.nav-item.active { color: var(--c-fg); }
+
+    .badge {
+      background: var(--c-accent);
+      color: #fff;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    /* ── PAGES / SECTIONS ────────────────────────────────────────── */
+    .page { display: none; border-bottom: 1px solid var(--c-border); }
+    .page.active { display: block; }
+
+    .section-inner { padding-block: var(--section-v); }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--c-border);
+      flex-wrap: wrap;
+    }
+    .section-num {
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      color: var(--c-muted);
+      letter-spacing: 0.1em;
+    }
+    .section-title {
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 1.75rem;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .section-head-action { margin-left: auto; }
+
+    /* ── LOGIN ───────────────────────────────────────────────────── */
+    .login-outer {
+      min-height: calc(100vh - var(--banner-h) - var(--nav-h));
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: var(--section-v) var(--gutter);
     }
 
     .login-box {
-      background: var(--c-surface);
-      border: 1px solid rgba(155,92,246,0.3);
-      border-radius: 12px;
-      padding: 48px 40px;
       width: 100%;
       max-width: 380px;
+      border: 1px solid var(--c-border);
+      padding: 3rem 2.5rem;
     }
 
-    .login-box h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-    .login-box p  { font-size: 14px; color: var(--c-muted); margin-bottom: 32px; }
-
-    .login-box label { display: block; font-size: 12px; font-weight: 600; color: var(--c-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-    .login-box input {
-      width: 100%;
-      background: var(--c-bg);
-      border: 1px solid rgba(155,92,246,0.25);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 15px;
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      outline: none;
-      font-family: inherit;
-      transition: border-color 0.2s;
+    .login-box h1 {
+      font-family: var(--f-display);
+      font-style: italic;
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.5rem;
     }
-    .login-box input:focus { border-color: var(--c-accent); }
+    .login-sub {
+      font-size: 0.8125rem;
+      color: var(--c-muted);
+      margin-bottom: 2rem;
+    }
 
     .login-error {
-      background: rgba(239,68,68,0.1);
       border: 1px solid rgba(239,68,68,0.4);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-size: 13px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
       color: #fca5a5;
-      margin-bottom: 16px;
+      margin-bottom: 1rem;
       display: none;
     }
 
-    /* ── DASHBOARD ───────────────────────────────────────── */
-    .dashboard { display: flex; min-height: 100vh; }
-
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      min-height: 100vh;
-      background: var(--c-surface);
-      border-right: 1px solid rgba(155,92,246,0.2);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
+    /* ── FIRST LOGIN BANNER ──────────────────────────────────────── */
+    .first-login-banner {
+      border: 1px solid rgba(251,191,36,0.4);
+      padding: 1rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: #fde68a;
     }
+    .first-login-banner strong { display: block; margin-bottom: 0.25rem; }
 
-    .sidebar-logo {
-      padding: 24px 20px;
-      font-size: 16px;
-      font-weight: 800;
-      border-bottom: 1px solid rgba(155,92,246,0.15);
-    }
-    .sidebar-logo span { color: var(--c-accent); }
-    .sidebar-logo small { display: block; font-size: 11px; font-weight: 400; color: var(--c-muted); margin-top: 2px; }
-
-    .sidebar-nav { flex: 1; padding: 16px 0; }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 20px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--c-muted);
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      position: relative;
-    }
-    .nav-item:hover { background: rgba(155,92,246,0.08); color: #fff; }
-    .nav-item.active { background: rgba(155,92,246,0.15); color: #fff; }
-    .nav-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--c-accent);
-      border-radius: 0 2px 2px 0;
-    }
-
-.badge {
-      background: var(--c-accent);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
-      margin-left: auto;
-    }
-
-    .sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid rgba(155,92,246,0.15);
-    }
-
-    .logout-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--c-muted);
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: inherit;
-      width: 100%;
-      padding: 8px 0;
-      transition: color 0.2s;
-    }
-    .logout-btn:hover { color: #fca5a5; }
-
-    /* Main content */
-    .main {
-      margin-left: 220px;
-      flex: 1;
-      padding: 40px;
-      max-width: calc(100vw - 220px);
-    }
-
-    .page { display: none; }
-    .page.active { display: block; }
-
-    .page-header {
-      margin-bottom: 32px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(155,92,246,0.15);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .page-header h1 { font-size: 24px; font-weight: 800; }
-    .page-header p  { font-size: 14px; color: var(--c-muted); margin-top: 4px; }
-
-    /* ── FORMS & INPUTS ──────────────────────────────────── */
+    /* ── CARDS ───────────────────────────────────────────────────── */
     .card {
-      background: var(--c-surface);
-      border: 1px solid rgba(155,92,246,0.2);
-      border-radius: 10px;
-      padding: 28px;
-      margin-bottom: 20px;
+      border-bottom: 1px solid var(--c-border);
+      padding-block: 2rem;
     }
+    .card:last-child { border-bottom: none; padding-bottom: 0; }
 
     .card-title {
-      font-size: 15px;
+      font-family: var(--f-display);
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-bottom: 20px;
-      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
     }
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    /* ── FORMS & INPUTS ──────────────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
     .form-group:last-child { margin-bottom: 0; }
     .form-group.full { grid-column: 1 / -1; }
 
     label, .field-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--c-muted);
+      font-family: var(--f-mono);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: var(--c-muted);
     }
 
     input[type=text], input[type=email], input[type=tel],
     input[type=number], input[type=password], textarea, select {
-      background: var(--c-bg);
-      border: 1px solid rgba(155,92,246,0.2);
-      border-radius: 8px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 14px;
-      padding: 10px 14px;
+      background: transparent;
+      border: 1px solid var(--c-border);
+      border-radius: 0;
+      color: var(--c-fg);
+      font-family: var(--f-mono);
+      font-size: 0.8125rem;
+      padding: 0.75rem 0.875rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.15s;
       width: 100%;
       -webkit-appearance: none;
       appearance: none;
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--c-accent); }
-    input::placeholder, textarea::placeholder { color: #4a4a6a; }
+    input:focus, textarea:focus, select:focus { border-color: var(--c-muted); }
+    input::placeholder, textarea::placeholder { color: var(--c-muted); opacity: 0.4; }
+    select { cursor: pointer; }
+    select option { background: var(--c-bg); }
     textarea { resize: vertical; min-height: 90px; }
 
-    /* ── BUTTONS ─────────────────────────────────────────── */
+    /* ── BUTTONS ─────────────────────────────────────────────────── */
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 10px 18px;
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0;
+      font-family: var(--f-mono);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       cursor: pointer;
       border: none;
-      transition: background 0.2s, opacity 0.2s;
+      transition: background 0.15s, box-shadow 0.15s;
     }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .btn-primary { background: var(--c-accent); color: #fff; }
-    .btn-primary:hover:not(:disabled) { background: #7c3aed; }
+    .btn-primary { background: linear-gradient(135deg, var(--c-accent), #7C3AED); color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, var(--c-accent), var(--c-accent-light)); box-shadow: 0 0 24px rgba(155,92,246,0.4); }
 
     .btn-danger  { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
     .btn-danger:hover:not(:disabled)  { background: rgba(239,68,68,0.25); }
@@ -277,49 +296,50 @@ if (is_logged_in()) {
     .btn-ghost   { background: rgba(155,92,246,0.1); color: var(--c-accent-light); }
     .btn-ghost:hover:not(:disabled)   { background: rgba(155,92,246,0.2); }
 
-    .btn-sm { padding: 6px 12px; font-size: 13px; }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.6875rem; }
 
-    /* ── ALERTS ──────────────────────────────────────────── */
+    /* ── ALERTS ──────────────────────────────────────────────────── */
     .alert {
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-bottom: 20px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
+      margin-bottom: 1.5rem;
       display: none;
+      border: 1px solid var(--c-border);
     }
     .alert.show { display: block; }
-    .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
-    .alert-error   { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+    .alert-success { border-color: rgba(34,197,94,0.3); color: #86efac; }
+    .alert-error   { border-color: rgba(239,68,68,0.3);  color: #fca5a5; }
 
-    /* ── LIST ITEMS ──────────────────────────────────────── */
-    .item-list { display: flex; flex-direction: column; gap: 12px; }
+    /* ── LIST ITEMS ──────────────────────────────────────────────── */
+    .item-list { display: flex; flex-direction: column; }
 
     .item-card {
-      background: var(--c-bg);
-      border: 1px solid rgba(155,92,246,0.15);
-      border-radius: 8px;
-      padding: 16px 20px;
+      border-bottom: 1px solid var(--c-border);
+      padding-block: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 1.5rem;
     }
+    .item-card:last-child { border-bottom: none; }
     .item-card-info { flex: 1; min-width: 0; }
-    .item-card-info strong { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-    .item-card-info span  { font-size: 13px; color: var(--c-muted); }
+    .item-card-info strong { display: block; font-size: 0.9375rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .item-card-info span   { font-size: 0.8125rem; color: var(--c-muted); }
     .item-card-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
-    /* Tags display */
+    /* Tags */
     .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .tag {
-      background: rgba(155,92,246,0.15);
-      color: var(--c-accent-light);
-      padding: 2px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 500;
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      border: 1px solid var(--c-border);
+      padding: 2px 8px;
     }
 
-    /* ── MODAL ───────────────────────────────────────────── */
+    /* ── MODAL ───────────────────────────────────────────────────── */
     .modal-backdrop {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.7);
@@ -328,89 +348,91 @@ if (is_logged_in()) {
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 1.5rem;
     }
     .modal-backdrop.open { display: flex; }
 
     .modal {
       background: var(--c-surface);
-      border: 1px solid rgba(155,92,246,0.3);
-      border-radius: 12px;
-      padding: 32px;
+      border: 1px solid var(--c-border);
+      padding: 2rem;
       width: 100%;
       max-width: 520px;
       position: relative;
     }
-    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 24px; }
+    .modal h2 {
+      font-family: var(--f-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1;
+    }
     .modal-close {
       position: absolute;
-      top: 16px; right: 20px;
+      top: 1rem; right: 1.25rem;
       background: none; border: none;
-      font-size: 20px; color: var(--c-muted);
+      font-size: 1.25rem; color: var(--c-muted);
       cursor: pointer; line-height: 1;
     }
-    .modal-close:hover { color: #fff; }
-    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .modal-close:hover { color: var(--c-fg); }
+    .modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
 
-    /* ── INBOX ───────────────────────────────────────────── */
+    /* ── INBOX ───────────────────────────────────────────────────── */
     .submission {
-      background: var(--c-bg);
-      border: 1px solid rgba(155,92,246,0.15);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 12px;
+      border-bottom: 1px solid var(--c-border);
+      padding-block: 1.5rem;
       position: relative;
     }
-    .submission.unread { border-left: 3px solid var(--c-accent); }
-    .submission-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
-    .submission-meta strong { font-size: 15px; font-weight: 700; }
-    .submission-meta span  { font-size: 13px; color: var(--c-muted); }
-    .submission p { font-size: 14px; color: #d1d1e0; line-height: 1.65; white-space: pre-wrap; }
-    .submission-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .submission:last-child { border-bottom: none; }
+    .submission.unread { border-left: 3px solid var(--c-accent); padding-left: 1.25rem; }
+    .submission-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; align-items: baseline; }
+    .submission-meta strong { font-size: 0.9375rem; font-weight: 700; }
+    .submission-meta span  { font-size: 0.8125rem; color: var(--c-muted); }
+    .submission p { font-size: 0.875rem; color: #d1d1e0; line-height: 1.65; white-space: pre-wrap; }
+    .submission-actions { display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap; }
     .unread-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: var(--c-accent);
-      display: inline-block; margin-right: 6px;
+      width: 7px; height: 7px; border-radius: 50%; background: var(--c-accent);
+      display: inline-block; margin-right: 6px; flex-shrink: 0;
     }
 
-    /* First login warning */
-    .first-login-banner {
-      background: rgba(251,191,36,0.1);
-      border: 1px solid rgba(251,191,36,0.4);
-      border-radius: 10px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      font-size: 14px;
-      color: #fde68a;
-    }
-    .first-login-banner strong { display: block; margin-bottom: 4px; }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .sidebar { width: 100%; min-height: auto; position: relative; flex-direction: row; flex-wrap: wrap; }
-      .sidebar-nav { display: flex; flex-direction: row; flex-wrap: wrap; padding: 8px; }
-      .nav-item { padding: 8px 12px; font-size: 12px; }
-      .main { margin-left: 0; padding: 20px; max-width: 100%; }
-      .dashboard { flex-direction: column; }
+    /* ── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 860px) {
       .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .nav-links { gap: 1rem; }
+      .nav-links button.nav-item { font-size: 0.6875rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
+  <div class="demo-banner">Admin Panel</div>
+
 <?php if ($show_login): ?>
 <!-- ═══════════════════════════════════════
      LOGIN SCREEN
 ═══════════════════════════════════════ -->
-<div class="login-wrap">
-  <div class="login-box">
-    <h1>HR Lighting</h1>
-    <p>Admin panel — please sign in.</p>
-    <div class="login-error" id="loginError"></div>
-    <label for="loginPass">Password</label>
-    <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" />
-    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Sign In</button>
+
+  <nav>
+    <span class="nav-brand">HR <em>Lighting</em></span>
+  </nav>
+
+  <div class="login-outer">
+    <div class="login-box">
+      <h1>Sign In</h1>
+      <p class="login-sub">Admin panel — enter your password to continue.</p>
+      <div class="login-error" id="loginError"></div>
+      <div class="form-group">
+        <label for="loginPass">Password</label>
+        <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" />
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn">Sign In &rarr;</button>
+    </div>
   </div>
-</div>
 
 <script>
   async function doLogin() {
@@ -436,13 +458,13 @@ if (is_logged_in()) {
         err.textContent   = json.error || 'Incorrect password.';
         err.style.display = 'block';
         btn.disabled      = false;
-        btn.textContent   = 'Sign In';
+        btn.textContent   = 'Sign In →';
       }
     } catch {
       err.textContent   = 'Connection error. Please try again.';
       err.style.display = 'block';
       btn.disabled      = false;
-      btn.textContent   = 'Sign In';
+      btn.textContent   = 'Sign In →';
     }
   }
 
@@ -456,228 +478,218 @@ if (is_logged_in()) {
 <!-- ═══════════════════════════════════════
      DASHBOARD
 ═══════════════════════════════════════ -->
-<div class="dashboard">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      HR <span>Lighting</span>
-      <small>Admin Panel</small>
-    </div>
+  <nav id="navbar">
+    <span class="nav-brand">HR <em>Lighting</em></span>
+    <ul class="nav-links">
+      <li><button class="nav-item active" data-page="settings">Settings</button></li>
+      <li><button class="nav-item" data-page="services">Services</button></li>
+      <li><button class="nav-item" data-page="productions">Productions</button></li>
+      <li><button class="nav-item" data-page="skills">Skills</button></li>
+      <li><button class="nav-item" data-page="inbox">Inbox<?php if ($unread_count > 0): ?><span class="badge"><?= $unread_count ?></span><?php endif; ?></button></li>
+      <li><button class="nav-item" data-page="password">Password</button></li>
+      <li><button class="nav-item" id="logoutBtn">Sign Out</button></li>
+    </ul>
+  </nav>
 
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-page="settings">
-        Site Settings
-      </button>
-      <button class="nav-item" data-page="services">
-        Services
-      </button>
-      <button class="nav-item" data-page="productions">
-        Productions
-      </button>
-      <button class="nav-item" data-page="skills">
-        Skills
-      </button>
-      <button class="nav-item" data-page="inbox">
-        Inbox
-        <?php if ($unread_count > 0): ?>
-          <span class="badge"><?= $unread_count ?></span>
-        <?php endif; ?>
-      </button>
-      <button class="nav-item" data-page="password">
-        Password
-      </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="logout-btn" id="logoutBtn">
-        <span>↩</span> Sign Out
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="main">
-
-    <?php if ($show_first_login): ?>
+  <?php if ($show_first_login): ?>
+  <div class="wrap">
     <div class="first-login-banner">
       <strong>Welcome! Please change your password before doing anything else.</strong>
-      The temporary password is <code>hrls2026</code> — click <strong>Password</strong> in the sidebar to change it now.
+      The temporary password is <code>hrls2026</code> — click <strong>Password</strong> in the nav to change it now.
     </div>
-    <?php endif; ?>
+  </div>
+  <?php endif; ?>
 
-    <!-- ── SITE SETTINGS ── -->
-    <div class="page active" id="page-settings">
-      <div class="page-header">
-        <div>
-          <h1>Site Settings</h1>
-          <p>Edit the text and contact details shown on your website.</p>
-        </div>
-        <button class="btn btn-primary" id="saveSettingsBtn">Save Changes</button>
-      </div>
-
-      <div class="alert" id="settingsAlert"></div>
-
-      <div class="card">
-        <div class="card-title">Hero Section</div>
-        <div class="form-group">
-          <label>Location Badge (top of page)</label>
-          <input type="text" id="s_hero_badge" placeholder="e.g. Based in Stratford-upon-Avon" />
-        </div>
-        <div class="form-group">
-          <label>Main Heading</label>
-          <input type="text" id="s_hero_heading" placeholder="e.g. Lighting Design & Technical Production" />
-        </div>
-        <div class="form-group">
-          <label>Subtext (paragraph under heading)</label>
-          <textarea id="s_hero_subtext" rows="3"></textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">About Section</div>
-        <div class="form-group">
-          <label>Your Name / Heading</label>
-          <input type="text" id="s_about_heading" />
-        </div>
-        <div class="form-group">
-          <label>First Paragraph</label>
-          <textarea id="s_about_text_1" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Second Paragraph</label>
-          <textarea id="s_about_text_2" rows="3"></textarea>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Stats (the two big numbers)</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>First Number (e.g. 8+)</label>
-            <input type="text" id="s_stat_1_number" />
-          </div>
-          <div class="form-group">
-            <label>First Label</label>
-            <input type="text" id="s_stat_1_label" />
-          </div>
-          <div class="form-group">
-            <label>Second Number (e.g. 3)</label>
-            <input type="text" id="s_stat_2_number" />
-          </div>
-          <div class="form-group">
-            <label>Second Label</label>
-            <input type="text" id="s_stat_2_label" />
+  <!-- ── SITE SETTINGS ── -->
+  <div class="page active" id="page-settings">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">01</span>
+          <h2 class="section-title">Site Settings</h2>
+          <div class="section-head-action">
+            <button class="btn btn-primary" id="saveSettingsBtn">Save Changes</button>
           </div>
         </div>
-      </div>
 
-      <div class="card">
-        <div class="card-title">Contact Details</div>
-        <div class="form-group">
-          <label>Address</label>
-          <input type="text" id="s_contact_address" />
-        </div>
-        <div class="form-grid">
+        <div class="alert" id="settingsAlert"></div>
+
+        <div class="card">
+          <div class="card-title">Hero Section</div>
           <div class="form-group">
-            <label>Phone Number</label>
-            <input type="text" id="s_contact_phone" />
+            <label>Location Badge (top of page)</label>
+            <input type="text" id="s_hero_badge" placeholder="e.g. Based in Stratford-upon-Avon" />
           </div>
           <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="s_contact_email" />
+            <label>Main Heading</label>
+            <input type="text" id="s_hero_heading" placeholder="e.g. Lighting Design & Technical Production" />
+          </div>
+          <div class="form-group">
+            <label>Subtext (paragraph under heading)</label>
+            <textarea id="s_hero_subtext" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">About Section</div>
+          <div class="form-group">
+            <label>Your Name / Heading</label>
+            <input type="text" id="s_about_heading" />
+          </div>
+          <div class="form-group">
+            <label>First Paragraph</label>
+            <textarea id="s_about_text_1" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Second Paragraph</label>
+            <textarea id="s_about_text_2" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Stats (the two big numbers)</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>First Number (e.g. 8+)</label>
+              <input type="text" id="s_stat_1_number" />
+            </div>
+            <div class="form-group">
+              <label>First Label</label>
+              <input type="text" id="s_stat_1_label" />
+            </div>
+            <div class="form-group">
+              <label>Second Number (e.g. 3)</label>
+              <input type="text" id="s_stat_2_number" />
+            </div>
+            <div class="form-group">
+              <label>Second Label</label>
+              <input type="text" id="s_stat_2_label" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Contact Details</div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" id="s_contact_address" />
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" id="s_contact_phone" />
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="s_contact_email" />
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── SERVICES ── -->
-    <div class="page" id="page-services">
-      <div class="page-header">
-        <div>
-          <h1>Services</h1>
-          <p>The three service cards shown on your homepage. The purple (featured) one appears first.</p>
+  <!-- ── SERVICES ── -->
+  <div class="page" id="page-services">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">02</span>
+          <h2 class="section-title">Services</h2>
+          <div class="section-head-action">
+            <button class="btn btn-primary" id="addServiceBtn">+ Add Service</button>
+          </div>
         </div>
-        <button class="btn btn-primary" id="addServiceBtn">+ Add Service</button>
-      </div>
-      <div class="alert" id="servicesAlert"></div>
-      <div class="item-list" id="servicesList">
-        <p style="color:var(--c-muted)">Loading…</p>
+        <div class="alert" id="servicesAlert"></div>
+        <div class="item-list" id="servicesList">
+          <p style="color:var(--c-muted)">Loading…</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── PRODUCTIONS ── -->
-    <div class="page" id="page-productions">
-      <div class="page-header">
-        <div>
-          <h1>Productions</h1>
-          <p>Every production shown in your portfolio. Add, edit, or remove entries here.</p>
+  <!-- ── PRODUCTIONS ── -->
+  <div class="page" id="page-productions">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">03</span>
+          <h2 class="section-title">Productions</h2>
+          <div class="section-head-action">
+            <button class="btn btn-primary" id="addProductionBtn">+ Add Production</button>
+          </div>
         </div>
-        <button class="btn btn-primary" id="addProductionBtn">+ Add Production</button>
-      </div>
-      <div class="alert" id="productionsAlert"></div>
-      <div class="item-list" id="productionsList">
-        <p style="color:var(--c-muted)">Loading…</p>
+        <div class="alert" id="productionsAlert"></div>
+        <div class="item-list" id="productionsList">
+          <p style="color:var(--c-muted)">Loading…</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── SKILLS ── -->
-    <div class="page" id="page-skills">
-      <div class="page-header">
-        <div>
-          <h1>Skills</h1>
-          <p>Technical skills shown in your about section.</p>
+  <!-- ── SKILLS ── -->
+  <div class="page" id="page-skills">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">04</span>
+          <h2 class="section-title">Skills</h2>
+          <div class="section-head-action">
+            <button class="btn btn-primary" id="addSkillBtn">+ Add Skill</button>
+          </div>
         </div>
-        <button class="btn btn-primary" id="addSkillBtn">+ Add Skill</button>
-      </div>
-      <div class="alert" id="skillsAlert"></div>
-      <div class="item-list" id="skillsList">
-        <p style="color:var(--c-muted)">Loading…</p>
+        <div class="alert" id="skillsAlert"></div>
+        <div class="item-list" id="skillsList">
+          <p style="color:var(--c-muted)">Loading…</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── INBOX ── -->
-    <div class="page" id="page-inbox">
-      <div class="page-header">
-        <div>
-          <h1>Inbox</h1>
-          <p>Contact form enquiries sent through your website.</p>
+  <!-- ── INBOX ── -->
+  <div class="page" id="page-inbox">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">05</span>
+          <h2 class="section-title">Inbox</h2>
         </div>
-      </div>
-      <div class="alert" id="inboxAlert"></div>
-      <div id="inboxList">
-        <p style="color:var(--c-muted)">Loading…</p>
+        <div class="alert" id="inboxAlert"></div>
+        <div id="inboxList">
+          <p style="color:var(--c-muted)">Loading…</p>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- ── PASSWORD ── -->
-    <div class="page" id="page-password">
-      <div class="page-header">
-        <div>
-          <h1>Change Password</h1>
-          <p>Update your admin panel password.</p>
+  <!-- ── PASSWORD ── -->
+  <div class="page" id="page-password">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">06</span>
+          <h2 class="section-title">Change Password</h2>
         </div>
-      </div>
-      <div class="alert" id="passwordAlert"></div>
-      <div class="card" style="max-width: 400px;">
-        <div class="form-group">
-          <label>Current Password</label>
-          <input type="password" id="currentPass" autocomplete="current-password" />
+        <div class="alert" id="passwordAlert"></div>
+        <div style="max-width: 400px;">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="currentPass" autocomplete="current-password" />
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="newPass" autocomplete="new-password" />
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmPass" autocomplete="new-password" />
+          </div>
+          <button class="btn btn-primary" id="changePassBtn">Update Password &rarr;</button>
         </div>
-        <div class="form-group">
-          <label>New Password</label>
-          <input type="password" id="newPass" autocomplete="new-password" />
-        </div>
-        <div class="form-group">
-          <label>Confirm New Password</label>
-          <input type="password" id="confirmPass" autocomplete="new-password" />
-        </div>
-        <button class="btn btn-primary" id="changePassBtn">Update Password</button>
       </div>
     </div>
-
-  </main>
-</div>
+  </div>
 
 <!-- ═══════════════════════════════════════
      MODALS
@@ -735,7 +747,7 @@ if (is_logged_in()) {
     <div class="form-group">
       <label>Your Roles (comma-separated)</label>
       <input type="text" id="prod_tags" placeholder="e.g. LD, Operator, Technical DSM" />
-      <span style="font-size:12px;color:var(--c-muted);margin-top:4px;">Separate each role with a comma</span>
+      <span style="font-size:0.6875rem;color:var(--c-muted);margin-top:4px;">Separate each role with a comma</span>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('productionModal')">Cancel</button>
@@ -936,7 +948,7 @@ async function loadProductions() {
   if (!prods.length) { list.innerHTML = '<p style="color:var(--c-muted)">No productions yet. Click Add Production.</p>'; return; }
   list.innerHTML = prods.map(p => `
     <div class="item-card">
-      <div style="font-size:22px;font-weight:800;color:rgba(155,92,246,0.4);min-width:52px;text-align:center">${p.year}</div>
+      <div style="font-family:var(--f-display);font-size:2rem;font-weight:700;color:var(--c-border);min-width:52px;text-align:center;line-height:1">${p.year}</div>
       <div class="item-card-info">
         <strong>${escHtml(p.title)}</strong>
         <span>${escHtml(p.venue)}</span>
@@ -1050,7 +1062,7 @@ async function loadInbox() {
   const subs = await apiGet('get_submissions');
   const list = document.getElementById('inboxList');
   if (!subs.length) {
-    list.innerHTML = '<div class="card" style="text-align:center;color:var(--c-muted);padding:48px">No enquiries yet. When someone fills in your contact form, they\'ll appear here.</div>';
+    list.innerHTML = '<p style="color:var(--c-muted)">No enquiries yet. When someone fills in your contact form, they\'ll appear here.</p>';
     return;
   }
   list.innerHTML = subs.map(s => `
@@ -1061,7 +1073,7 @@ async function loadInbox() {
         <span>${escHtml(s.email)}</span>
         ${s.phone ? `<span>${escHtml(s.phone)}</span>` : ''}
         ${s.project_type ? `<span>${escHtml(s.project_type)}</span>` : ''}
-        <span style="margin-left:auto;font-size:12px;color:#6b6b80">${escHtml(s.submitted_at)}</span>
+        <span style="margin-left:auto;font-size:0.6875rem;color:var(--c-muted)">${escHtml(s.submitted_at)}</span>
       </div>
       <p>${escHtml(s.message)}</p>
       <div class="submission-actions">
@@ -1106,14 +1118,13 @@ document.getElementById('changePassBtn').addEventListener('click', async () => {
 
   btn.disabled = true; btn.textContent = 'Updating…';
   const res = await api('change_password', { current_password: current, new_password: newP });
-  btn.disabled = false; btn.textContent = 'Update Password';
+  btn.disabled = false; btn.textContent = 'Update Password →';
 
   if (res.success) {
     showAlert('passwordAlert', 'Password updated.');
     document.getElementById('currentPass').value = '';
     document.getElementById('newPass').value      = '';
     document.getElementById('confirmPass').value  = '';
-    // Remove the first-login warning banner
     document.querySelector('.first-login-banner')?.remove();
   } else {
     showAlert('passwordAlert', res.error || 'Error updating password.', 'error');
