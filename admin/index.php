@@ -21,7 +21,6 @@ if (is_logged_in()) {
   <link rel="stylesheet" href="../style.css" />
   <style>
     textarea { min-height: 90px; }
-    nav { top: 0; }
 
     /* ── PAGES / SECTIONS ────────────────────────────────────────── */
     .page { display: none; border-bottom: 1px solid var(--c-border); }
@@ -30,7 +29,7 @@ if (is_logged_in()) {
 
     /* ── LOGIN ───────────────────────────────────────────────────── */
     .login-outer {
-      min-height: calc(100vh - var(--banner-h) - var(--nav-h));
+      min-height: calc(100vh - var(--nav-h));
       display: flex;
       align-items: center;
       justify-content: center;

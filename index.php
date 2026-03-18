@@ -20,7 +20,6 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   <link rel="stylesheet" href="style.css" />
   <style>
     textarea { min-height: 130px; }
-    nav { top: 0; }
 
     /* ── HERO ────────────────────────────────────────────────────── */
     .hero-outer {
