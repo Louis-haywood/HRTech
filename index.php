@@ -821,6 +821,20 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       });
     });
 
+    // Live reload — poll for content changes made in the admin
+    (function () {
+      let knownVersion = null;
+      async function checkVersion() {
+        try {
+          const res  = await fetch('api.php?action=version', { cache: 'no-store' });
+          const json = await res.json();
+          if (knownVersion === null) { knownVersion = json.v; return; }
+          if (json.v !== knownVersion) { location.reload(); }
+        } catch {}
+      }
+      setInterval(checkVersion, 5000);
+    })();
+
     // Contact form
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
