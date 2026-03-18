@@ -278,7 +278,7 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   <!-- CREDITS -->
   <div class="credits">
     <a href="https://louishaywood.uk" target="_blank" rel="noopener" class="credits-inner">
-      <img src="https://louishaywood.uk/pfp.png" alt="Louis Haywood" class="credits-logo" />
+      <img src="https://louishaywood.uk/pfp.jpg" alt="Louis Haywood" class="credits-logo" />
       <div class="credits-text">
         <span class="credits-label">Designed &amp; Built by</span>
         <span class="credits-name">Louis Haywood</span>
