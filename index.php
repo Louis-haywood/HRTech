@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $db          = get_db();
-$s           = settings(); // all settings as array
+$s           = settings();
 $services    = $db->query("SELECT * FROM services    ORDER BY sort_order")->fetchAll();
 $productions = $db->query("SELECT * FROM productions ORDER BY sort_order")->fetchAll();
 $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetchAll();
@@ -17,663 +17,812 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= esc(setting('site_name')) ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700;1,900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* ── DESIGN TOKENS ───────────────────────────────────────────── */
+    :root {
+      --c-bg:      #09090a;
+      --c-surface: #0d0c0a;
+      --c-fg:      #ede8df;
+      --c-accent:  #d4921a;
+      --c-muted:   #4e4b44;
+      --c-border:  #1c1b17;
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0d0d12;
-      color: #fff;
-      line-height: 1.6;
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-mono:    'Space Mono', 'Courier New', monospace;
+
+      /* type scale */
+      --s-10:   0.625rem;
+      --s-11:   0.6875rem;
+      --s-13:   0.8125rem;
+      --s-15:   0.9375rem;
+      --s-20:   1.25rem;
+      --s-28:   1.75rem;
+      --s-36:   2.25rem;
+      --s-hero: clamp(3rem, 7.5vw, 6.5rem);
+
+      --max-w:      1160px;
+      --gutter:     clamp(1.25rem, 5vw, 3.5rem);
+      --section-v:  clamp(3.5rem, 7vw, 6rem);
+
+      --banner-h: 33px;
+      --nav-h:    52px;
     }
 
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
+    /* ── RESET ───────────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--f-mono);
+      font-size: var(--s-15);
+      background: var(--c-bg);
+      color: var(--c-fg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a  { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
 
-    /* ── NAV ── */
-    nav {
+    /* ── SHARED ──────────────────────────────────────────────────── */
+    .wrap {
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    .eyebrow {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+    }
+
+    /* ── DEMO BANNER ─────────────────────────────────────────────── */
+    .demo-banner {
       position: sticky;
       top: 0;
-      background: rgba(13, 13, 18, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(155, 92, 246, 0.2);
-      z-index: 100;
-      padding: 0 40px;
+      z-index: 300;
+      background: var(--c-accent);
+      color: #000;
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 8px;
+      height: var(--banner-h);
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: var(--banner-h);
+      z-index: 200;
+      height: var(--nav-h);
+      background: var(--c-bg);
+      border-bottom: 1px solid var(--c-border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 64px;
+      padding-inline: var(--gutter);
     }
 
-    .nav-logo { font-size: 18px; font-weight: 800; }
-    .nav-logo span { color: #9b5cf6; }
-
-    .nav-links { display: flex; gap: 32px; list-style: none; }
-    .nav-links a { font-size: 15px; color: #9d9db8; transition: color 0.2s; }
-    .nav-links a:hover, .nav-links a.active { color: #fff; }
-
-    .nav-cta {
-      background: #9b5cf6;
-      color: #fff;
-      padding: 10px 22px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      transition: background 0.2s;
+    .nav-brand {
+      font-family: var(--f-mono);
+      font-size: var(--s-13);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
-    .nav-cta:hover { background: #7c3aed; }
+    .nav-brand em { font-style: normal; color: var(--c-accent); }
 
-    /* ── HERO ── */
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-links a {
+      font-family: var(--f-mono);
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      letter-spacing: 0.04em;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--c-fg); }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    .hero-outer {
+      border-bottom: 1px solid var(--c-border);
+    }
     .hero {
-      padding: 100px 40px;
-      max-width: 900px;
-      margin: 0 auto;
-      text-align: center;
+      padding-block: var(--section-v);
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 3rem;
+      align-items: end;
     }
 
-    .hero-badge {
+    .hero-eyebrow { margin-bottom: 1.5rem; }
+
+    .hero-title {
+      font-family: var(--f-display);
+      font-style: italic;
+      font-weight: 900;
+      font-size: var(--s-hero);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-aside {
+      padding-left: 2rem;
+      border-left: 1px solid var(--c-border);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .hero-desc {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      line-height: 1.8;
+    }
+
+    .hero-cta {
+      font-family: var(--f-mono);
+      font-size: var(--s-13);
+      font-weight: 700;
+      color: var(--c-accent);
+      letter-spacing: 0.04em;
       display: inline-block;
-      background: rgba(155, 92, 246, 0.15);
-      color: #c084fc;
-      border: 1px solid rgba(155, 92, 246, 0.3);
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 28px;
+      transition: letter-spacing 0.2s;
+    }
+    .hero-cta:hover { letter-spacing: 0.1em; }
+
+    /* ── SECTION SHELL ───────────────────────────────────────────── */
+    .section-outer {
+      border-bottom: 1px solid var(--c-border);
+    }
+    .section-inner {
+      padding-block: var(--section-v);
     }
 
-    .hero h1 {
-      font-size: clamp(40px, 7vw, 80px);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 24px;
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--c-border);
     }
-
-    .hero h1 span { color: #9b5cf6; }
-
-    .hero p {
-      font-size: 18px;
-      color: #9d9db8;
-      max-width: 600px;
-      margin: 0 auto 40px;
-    }
-
-    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
-    .btn-primary {
-      background: #9b5cf6;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 600;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .btn-primary:hover { background: #7c3aed; transform: translateY(-1px); }
-
-    .btn-outline {
-      background: transparent;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: 600;
-      border: 1px solid rgba(155, 92, 246, 0.4);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .btn-outline:hover { border-color: #9b5cf6; background: rgba(155, 92, 246, 0.08); }
-
-    /* ── SECTIONS ── */
-    section { padding: 80px 40px; }
-    .section-inner { max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: #9b5cf6; margin-bottom: 12px;
+    .section-num {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      color: var(--c-muted);
+      letter-spacing: 0.1em;
     }
     .section-title {
-      font-size: clamp(28px, 4vw, 44px);
-      font-weight: 800; letter-spacing: -0.02em; margin-bottom: 48px;
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: var(--s-28);
+      letter-spacing: -0.01em;
+      line-height: 1;
     }
 
-    /* ── SERVICES ── */
-    #services { background: #0d0d12; }
-
-    .services-grid {
+    /* ── SERVICES ────────────────────────────────────────────────── */
+    .service-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: 2.5rem 1fr;
+      gap: 1.5rem;
+      padding-block: 2rem;
+      border-bottom: 1px solid var(--c-border);
+      align-items: start;
+    }
+    .service-row:last-child { border-bottom: none; }
+
+    .service-idx {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      color: var(--c-muted);
+      letter-spacing: 0.06em;
+      padding-top: 0.55rem;
     }
 
-    .service-card {
-      background: #1a1525;
-      border: 1px solid rgba(155, 92, 246, 0.2);
-      border-radius: 10px;
-      padding: 36px;
-      transition: transform 0.2s, border-color 0.2s;
+    .service-name {
+      font-family: var(--f-display);
+      font-size: var(--s-36);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.015em;
     }
-    .service-card:hover { transform: translateY(-4px); border-color: rgba(155, 92, 246, 0.5); }
-    .service-card.featured {
-      background: linear-gradient(135deg, #9b5cf6, #7c3aed);
-      border-color: transparent;
+    .service-row.featured .service-name { color: var(--c-accent); }
+
+    .service-body {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      line-height: 1.8;
+      max-width: 58ch;
     }
-    .service-card.featured:hover { transform: translateY(-4px); }
 
-    .service-icon { font-size: 28px; margin-bottom: 16px; }
-    .service-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
-    .service-card p { font-size: 14px; color: #9d9db8; line-height: 1.65; }
-    .service-card.featured p { color: rgba(255,255,255,0.85); }
-
-    /* ── PRODUCTIONS ── */
-    #productions { background: #0a0a10; }
-
-    .productions-grid {
+    /* ── PRODUCTIONS ─────────────────────────────────────────────── */
+    .production-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-    }
-
-    .production-card {
-      background: #1a1525;
-      border: 1px solid rgba(155, 92, 246, 0.15);
-      border-radius: 10px;
-      padding: 28px;
-      display: flex;
-      justify-content: space-between;
+      grid-template-columns: 1fr 5rem;
+      gap: 2rem;
+      padding-block: 1.5rem;
+      border-bottom: 1px solid var(--c-border);
       align-items: center;
-      gap: 16px;
-      transition: border-color 0.2s;
     }
-    .production-card:hover { border-color: rgba(155, 92, 246, 0.4); }
-    .production-info h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-    .production-info p { font-size: 13px; color: #9d9db8; margin-bottom: 10px; }
+    .production-row:last-child { border-bottom: none; }
 
-    .production-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .production-title {
+      font-family: var(--f-display);
+      font-size: var(--s-20);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 0.3rem;
+    }
+
+    .production-venue {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .production-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
     .tag {
-      background: rgba(155, 92, 246, 0.15);
-      color: #c084fc;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 500;
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      border: 1px solid var(--c-border);
+      padding: 2px 8px;
     }
 
-    .production-year { font-size: 24px; font-weight: 800; color: rgba(155,92,246,0.3); flex-shrink: 0; }
+    .production-year {
+      font-family: var(--f-display);
+      font-size: var(--s-36);
+      font-weight: 700;
+      color: var(--c-border);
+      line-height: 1;
+      text-align: right;
+    }
 
-    /* ── ABOUT ── */
-    #about { background: #0d0d12; }
-
+    /* ── ABOUT ───────────────────────────────────────────────────── */
     .about-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
+      grid-template-columns: 1fr 300px;
+      gap: 4rem;
       align-items: start;
     }
 
-    .about-text h2 {
-      font-size: clamp(26px, 3vw, 38px);
-      font-weight: 800; letter-spacing: -0.02em; margin-bottom: 20px; line-height: 1.2;
-    }
-    .about-text p { color: #9d9db8; font-size: 16px; margin-bottom: 16px; }
-
-    .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px; }
-    .skill-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #9d9db8; }
-    .skill-item::before {
-      content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: #9b5cf6; flex-shrink: 0;
+    .about-name {
+      font-family: var(--f-display);
+      font-size: var(--s-28);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
     }
 
-    .about-stats { display: flex; flex-direction: column; gap: 20px; }
+    .about-body {
+      font-size: var(--s-15);
+      color: var(--c-muted);
+      line-height: 1.85;
+      margin-bottom: 1rem;
+    }
 
-    .stat-box {
-      background: #1a1525;
-      border: 1px solid rgba(155,92,246,0.2);
-      border-radius: 10px;
-      padding: 28px;
+    .skills-wrap {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--c-border);
     }
-    .stat-box .number { font-size: 48px; font-weight: 800; color: #9b5cf6; line-height: 1; margin-bottom: 6px; }
-    .stat-box .label { font-size: 14px; color: #9d9db8; }
+    .skills-label { margin-bottom: 0.75rem; }
+    .skills-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .skill-chip {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      border: 1px solid var(--c-border);
+      padding: 3px 10px;
+    }
 
-    .edu-box {
-      background: #1a1525;
-      border: 1px solid rgba(155,92,246,0.2);
-      border-radius: 10px;
-      padding: 28px;
+    .about-aside { display: flex; flex-direction: column; gap: 2rem; }
+
+    .stat-block {
+      border-top: 2px solid var(--c-accent);
+      padding-top: 1rem;
     }
-    .edu-box h4 {
-      font-size: 13px; font-weight: 700; color: #9b5cf6;
-      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
+    .stat-number {
+      font-family: var(--f-display);
+      font-size: 3.75rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 0.4rem;
     }
-    .edu-item { margin-bottom: 14px; }
+    .stat-label {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      line-height: 1.4;
+    }
+
+    .edu-block {
+      border-top: 1px solid var(--c-border);
+      padding-top: 1.5rem;
+    }
+    .edu-block-label { margin-bottom: 1.25rem; }
+    .edu-item { margin-bottom: 1.25rem; }
     .edu-item:last-child { margin-bottom: 0; }
-    .edu-item strong { display: block; font-size: 15px; font-weight: 600; margin-bottom: 2px; }
-    .edu-item span { font-size: 13px; color: #9d9db8; }
-
-    /* ── CONTACT ── */
-    #contact { background: #0a0a10; }
-
-    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
-    .contact-info h2 {
-      font-size: clamp(26px, 3vw, 36px);
-      font-weight: 800; letter-spacing: -0.02em; margin-bottom: 20px;
+    .edu-item-title {
+      font-size: var(--s-15);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.2rem;
     }
-    .contact-info > p { color: #9d9db8; font-size: 16px; margin-bottom: 32px; }
-
-    .contact-detail { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; color: #9d9db8; }
-    .contact-detail .icon {
-      width: 36px; height: 36px; background: rgba(155,92,246,0.15);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0;
+    .edu-item-detail {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      line-height: 1.55;
     }
-    .contact-detail a { color: #9b5cf6; }
+
+    /* ── CONTACT ─────────────────────────────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .contact-heading {
+      font-family: var(--f-display);
+      font-style: italic;
+      font-size: var(--s-36);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-desc {
+      font-size: var(--s-13);
+      color: var(--c-muted);
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+
+    .contact-detail {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+      font-size: var(--s-13);
+    }
+    .contact-detail-key {
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      min-width: 4.5rem;
+      flex-shrink: 0;
+    }
+    .contact-detail a { color: var(--c-accent); }
     .contact-detail a:hover { text-decoration: underline; }
 
-    form { display: flex; flex-direction: column; gap: 16px; }
+    /* form */
+    form { display: flex; flex-direction: column; gap: 1.25rem; }
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
     label {
-      display: block; font-size: 13px; font-weight: 600; color: #9d9db8;
-      margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-muted);
     }
 
     input, select, textarea {
       width: 100%;
-      background: #1a1525;
-      border: 1px solid rgba(155,92,246,0.25);
-      border-radius: 8px;
-      color: #fff;
-      font-family: inherit;
-      font-size: 15px;
-      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid var(--c-border);
+      border-radius: 0;
+      color: var(--c-fg);
+      font-family: var(--f-mono);
+      font-size: var(--s-13);
+      padding: 0.75rem 0.875rem;
       outline: none;
-      transition: border-color 0.2s;
       -webkit-appearance: none;
       appearance: none;
+      transition: border-color 0.15s;
     }
-    input:focus, select:focus, textarea:focus { border-color: #9b5cf6; }
-    input::placeholder, textarea::placeholder { color: #4a4a6a; }
+    input:focus, select:focus, textarea:focus { border-color: var(--c-muted); }
+    input::placeholder, textarea::placeholder { color: var(--c-muted); opacity: 0.4; }
     select { cursor: pointer; }
-    select option { background: #1a1525; }
-    textarea { resize: vertical; min-height: 120px; }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    select option { background: var(--c-bg); }
+    textarea { resize: vertical; min-height: 130px; }
 
     .submit-btn {
-      background: #9b5cf6;
-      color: #fff;
+      font-family: var(--f-mono);
+      font-size: var(--s-13);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--c-accent);
+      color: #000;
       border: none;
-      border-radius: 6px;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 600;
-      padding: 14px;
+      padding: 0.875rem 1.75rem;
       cursor: pointer;
-      transition: background 0.2s;
+      align-self: flex-start;
+      transition: background 0.15s;
     }
-    .submit-btn:hover { background: #7c3aed; }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .submit-btn:hover    { background: #be821a; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .gdpr-note { font-size: 12px; color: #4a4a6a; text-align: center; }
+    .gdpr-note {
+      font-size: var(--s-11);
+      color: var(--c-muted);
+      letter-spacing: 0.04em;
+    }
 
     .form-error {
       display: none;
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.4);
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-size: 14px;
-      color: #fca5a5;
+      border: 1px solid #8b2e2e;
+      padding: 0.75rem 1rem;
+      font-size: var(--s-13);
+      color: #e07070;
     }
 
     .success-msg {
       display: none;
-      background: rgba(155,92,246,0.1);
-      border: 1px solid #9b5cf6;
-      border-radius: 10px;
-      padding: 32px;
-      text-align: center;
+      border: 1px solid var(--c-border);
+      padding: 2rem;
     }
-    .success-msg h3 { font-size: 20px; margin-bottom: 8px; }
-    .success-msg p { color: #9d9db8; font-size: 15px; }
-
-    /* ── DEMO MARKINGS ── */
-    .demo-banner {
-      background: #f59e0b;
-      color: #000;
-      text-align: center;
-      padding: 10px 16px;
-      font-size: 14px;
+    .success-msg-title {
+      font-family: var(--f-display);
+      font-size: var(--s-28);
       font-weight: 700;
-      letter-spacing: 0.03em;
-      position: sticky;
-      top: 0;
-      z-index: 200;
+      margin-bottom: 0.5rem;
     }
-    .demo-banner a { color: #000; text-decoration: underline; }
-
-    /* Push nav below the banner */
-    nav { top: 40px; }
-
-    .demo-corner {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #f59e0b;
-      color: #000;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 8px 14px;
-      border-radius: 6px;
-      z-index: 999;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    .success-msg-body {
+      font-size: var(--s-13);
+      color: var(--c-muted);
     }
 
-    .demo-section-tag {
-      display: inline-block;
-      background: #f59e0b;
-      color: #000;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: 4px;
-      margin-left: 12px;
-      vertical-align: middle;
-      position: relative;
-      top: -2px;
-    }
-
-    .demo-watermark {
-      pointer-events: none;
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(60px, 10vw, 120px);
-      font-weight: 900;
-      color: rgba(245, 158, 11, 0.06);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      user-select: none;
-      z-index: 0;
-    }
-
-    section { position: relative; }
-    section > * { position: relative; z-index: 1; }
-
-    /* ── FOOTER ── */
+    /* ── FOOTER ──────────────────────────────────────────────────── */
     footer {
-      background: #1a1525;
-      border-top: 1px solid rgba(155,92,246,0.2);
-      padding: 32px 40px;
+      padding: 1.5rem var(--gutter);
+      border-top: 1px solid var(--c-border);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 24px;
+      justify-content: space-between;
+      gap: 1rem;
       flex-wrap: wrap;
     }
-    footer .logo { font-size: 16px; font-weight: 700; }
-    footer .logo span { color: #9b5cf6; }
-    footer .footer-links { display: flex; gap: 24px; list-style: none; }
-    footer .footer-links a { font-size: 14px; color: #9d9db8; transition: color 0.2s; }
-    footer .footer-links a:hover { color: #9b5cf6; }
-    footer .copy { font-size: 13px; color: #4a4a6a; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      section { padding: 60px 20px; }
-      .hero { padding: 70px 20px; }
-      .productions-grid { grid-template-columns: 1fr; }
-      .about-grid { grid-template-columns: 1fr; }
-      .contact-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      .skills-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; text-align: center; padding: 24px 20px; }
-      footer .footer-links { justify-content: center; }
+    .footer-brand {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .footer-brand em { font-style: normal; color: var(--c-accent); }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--c-fg); }
+
+    .footer-copy {
+      font-family: var(--f-mono);
+      font-size: var(--s-11);
+      color: var(--c-muted);
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .hero-aside {
+        border-left: none;
+        border-top: 1px solid var(--c-border);
+        padding-left: 0;
+        padding-top: 1.5rem;
+      }
+      .about-grid    { grid-template-columns: 1fr; }
+      .contact-grid  { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links    { display: none; }
+      .form-row     { grid-template-columns: 1fr; }
+      .production-year { font-size: var(--s-28); }
+      footer { flex-direction: column; align-items: flex-start; }
+      .footer-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- DEMO BANNER -->
-  <div class="demo-banner">
-    ⚠️ DEMO PREVIEW — This website is a demonstration for Harry Richardson / HR Lighting Services. Content is not final and the site is not yet live.
-  </div>
+  <div class="demo-banner">Preview — content subject to change</div>
 
-  <!-- DEMO CORNER BADGE -->
-  <div class="demo-corner">DEMO</div>
-
-  <!-- NAV -->
   <nav id="navbar">
-    <div class="nav-logo">HR <span>Lighting</span></div>
+    <span class="nav-brand">Harry <em>Richardson</em></span>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
   <!-- HERO -->
-  <div class="hero" style="position:relative;">
-    <div class="demo-watermark">DEMO</div>
-    <div class="hero-badge"><?= esc(setting('hero_badge')) ?></div>
-    <h1><?= nl2br(esc(setting('hero_heading'))) ?></h1>
-    <p><?= esc(setting('hero_subtext')) ?></p>
-    <div class="hero-buttons">
-      <a href="#contact" class="btn-primary">Get a Quote</a>
-      <a href="#productions" class="btn-outline">View Productions</a>
+  <div class="hero-outer">
+    <div class="wrap">
+      <div class="hero">
+        <div class="hero-main">
+          <p class="hero-eyebrow eyebrow"><?= esc(setting('hero_badge')) ?> &nbsp;·&nbsp; Lighting Designer</p>
+          <h1 class="hero-title"><?= nl2br(esc(setting('hero_heading'))) ?></h1>
+        </div>
+        <aside class="hero-aside">
+          <p class="hero-desc"><?= esc(setting('hero_subtext')) ?></p>
+          <a href="#contact" class="hero-cta">Get in touch &rarr;</a>
+        </aside>
+      </div>
     </div>
   </div>
 
   <!-- SERVICES -->
-  <section id="services">
-    <div class="section-inner">
-      <div class="demo-watermark">DEMO</div>
-      <p class="section-label">What I Do</p>
-      <h2 class="section-title">Services <span class="demo-section-tag">Demo</span></h2>
-      <div class="services-grid">
-        <?php foreach ($services as $svc): ?>
-          <div class="service-card <?= $svc['featured'] ? 'featured' : '' ?>">
-            <div class="service-icon"><?= esc($svc['icon']) ?></div>
-            <h3><?= esc($svc['title']) ?></h3>
-            <p><?= esc($svc['body']) ?></p>
+  <div class="section-outer" id="services">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">01</span>
+          <h2 class="section-title">Services</h2>
+        </div>
+        <?php foreach ($services as $i => $svc): ?>
+          <div class="service-row <?= $svc['featured'] ? 'featured' : '' ?>">
+            <span class="service-idx eyebrow"><?= str_pad($i + 1, 2, '0', STR_PAD_LEFT) ?></span>
+            <div>
+              <h3 class="service-name"><?= esc($svc['title']) ?></h3>
+              <p class="service-body"><?= esc($svc['body']) ?></p>
+            </div>
           </div>
         <?php endforeach; ?>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- PRODUCTIONS -->
-  <section id="productions">
-    <div class="section-inner">
-      <div class="demo-watermark">DEMO</div>
-      <p class="section-label">Portfolio</p>
-      <h2 class="section-title">Productions <span class="demo-section-tag">Demo</span></h2>
-      <div class="productions-grid">
+  <div class="section-outer" id="productions">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">02</span>
+          <h2 class="section-title">Productions</h2>
+        </div>
         <?php foreach ($productions as $prod):
           $tags = json_decode($prod['tags'], true) ?: [];
         ?>
-          <div class="production-card">
-            <div class="production-info">
-              <h3><?= esc($prod['title']) ?></h3>
-              <p><?= esc($prod['venue']) ?></p>
-              <div class="production-tags">
-                <?php foreach ($tags as $tag): ?>
-                  <span class="tag"><?= esc($tag) ?></span>
-                <?php endforeach; ?>
-              </div>
+          <div class="production-row">
+            <div class="production-main">
+              <h3 class="production-title"><?= esc($prod['title']) ?></h3>
+              <p class="production-venue"><?= esc($prod['venue']) ?></p>
+              <?php if ($tags): ?>
+                <div class="production-tags">
+                  <?php foreach ($tags as $tag): ?>
+                    <span class="tag"><?= esc($tag) ?></span>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
             </div>
             <div class="production-year"><?= (int)$prod['year'] ?></div>
           </div>
         <?php endforeach; ?>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- ABOUT -->
-  <section id="about">
-    <div class="section-inner">
-      <div class="about-grid">
-
-        <div class="about-text">
-          <div class="demo-watermark">DEMO</div>
-          <p class="section-label">About</p>
-          <h2><?= esc(setting('about_heading')) ?> <span class="demo-section-tag">Demo</span></h2>
-          <p><?= esc(setting('about_text_1')) ?></p>
-          <p><?= esc(setting('about_text_2')) ?></p>
-
-          <?php if ($skills): ?>
-          <div class="skills-grid">
-            <?php foreach ($skills as $skill): ?>
-              <div class="skill-item"><?= esc($skill['name']) ?></div>
-            <?php endforeach; ?>
-          </div>
-          <?php endif; ?>
+  <div class="section-outer" id="about">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">03</span>
+          <h2 class="section-title">About</h2>
         </div>
+        <div class="about-grid">
 
-        <div class="about-stats">
-          <div class="stat-box">
-            <div class="number"><?= esc(setting('stat_1_number')) ?></div>
-            <div class="label"><?= esc(setting('stat_1_label')) ?></div>
+          <div class="about-text">
+            <h3 class="about-name"><?= esc(setting('about_heading')) ?></h3>
+            <p class="about-body"><?= esc(setting('about_text_1')) ?></p>
+            <p class="about-body"><?= esc(setting('about_text_2')) ?></p>
+
+            <?php if ($skills): ?>
+              <div class="skills-wrap">
+                <p class="eyebrow skills-label">Equipment &amp; Skills</p>
+                <div class="skills-flow">
+                  <?php foreach ($skills as $sk): ?>
+                    <span class="skill-chip"><?= esc($sk['name']) ?></span>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+            <?php endif; ?>
           </div>
-          <div class="stat-box">
-            <div class="number"><?= esc(setting('stat_2_number')) ?></div>
-            <div class="label"><?= esc(setting('stat_2_label')) ?></div>
+
+          <div class="about-aside">
+            <div class="stat-block">
+              <div class="stat-number"><?= esc(setting('stat_1_number')) ?></div>
+              <div class="stat-label"><?= esc(setting('stat_1_label')) ?></div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-number"><?= esc(setting('stat_2_number')) ?></div>
+              <div class="stat-label"><?= esc(setting('stat_2_label')) ?></div>
+            </div>
+            <div class="edu-block">
+              <p class="eyebrow edu-block-label">Education &amp; Training</p>
+              <div class="edu-item">
+                <p class="edu-item-title">BTEC Level 3 Extended Diploma</p>
+                <p class="edu-item-detail">Production Arts (Technical) — BOA Stage &amp; Screen Academy, Birmingham (2025–2027)</p>
+              </div>
+              <div class="edu-item">
+                <p class="edu-item-title">Stratford-upon-Avon High School</p>
+                <p class="edu-item-detail">GCSEs including Drama (Grade 6), Food Technology (Distinction 2) — 2020–2025</p>
+              </div>
+              <div class="edu-item">
+                <p class="edu-item-title">Basic First Aid</p>
+                <p class="edu-item-detail">Trained via Army Cadets</p>
+              </div>
+            </div>
           </div>
-          <div class="edu-box">
-            <h4>Education &amp; Training</h4>
-            <div class="edu-item">
-              <strong>BTEC Level 3 Extended Diploma</strong>
-              <span>Production Arts (Technical) — BOA Stage &amp; Screen Academy, Birmingham (2025–2027)</span>
-            </div>
-            <div class="edu-item">
-              <strong>Stratford-upon-Avon High School</strong>
-              <span>GCSEs including Drama (Grade 6), Food Technology (Distinction 2) — 2020–2025</span>
-            </div>
-            <div class="edu-item">
-              <strong>Basic First Aid</strong>
-              <span>Trained via Army Cadets</span>
-            </div>
-          </div>
+
         </div>
-
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- CONTACT -->
-  <section id="contact">
-    <div class="section-inner">
-      <div class="contact-grid">
-
-        <div class="contact-info">
-          <div class="demo-watermark">DEMO</div>
-          <p class="section-label">Contact</p>
-          <h2>Let's work together. <span class="demo-section-tag">Demo</span></h2>
-          <p>Got a production coming up? Get in touch and I'll get back to you quickly.</p>
-          <div class="contact-detail">
-            <div class="icon">📍</div>
-            <span><?= esc(setting('contact_address')) ?></span>
-          </div>
-          <div class="contact-detail">
-            <div class="icon">📞</div>
-            <a href="tel:<?= esc(preg_replace('/\s+/', '', setting('contact_phone'))) ?>">
-              <?= esc(setting('contact_phone')) ?>
-            </a>
-          </div>
-          <div class="contact-detail">
-            <div class="icon">✉️</div>
-            <a href="mailto:<?= esc(setting('contact_email')) ?>">
-              <?= esc(setting('contact_email')) ?>
-            </a>
-          </div>
+  <div id="contact">
+    <div class="wrap">
+      <div class="section-inner">
+        <div class="section-head">
+          <span class="section-num eyebrow">04</span>
+          <h2 class="section-title">Contact</h2>
         </div>
+        <div class="contact-grid">
 
-        <div>
-          <form id="contactForm" novalidate>
-            <div class="form-error" id="formError"></div>
-            <div class="form-row">
-              <div>
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required />
-              </div>
-              <div>
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required />
-              </div>
+          <div class="contact-info">
+            <h3 class="contact-heading">Let's work<br>together.</h3>
+            <p class="contact-desc">Got a production coming up? Get in touch and I'll get back to you quickly.</p>
+            <div class="contact-detail">
+              <span class="contact-detail-key">Location</span>
+              <span><?= esc(setting('contact_address')) ?></span>
             </div>
-            <div>
-              <label for="phone">Phone (optional)</label>
-              <input type="tel" id="phone" name="phone" placeholder="07700 900000" />
+            <div class="contact-detail">
+              <span class="contact-detail-key">Phone</span>
+              <a href="tel:<?= esc(preg_replace('/\s+/', '', setting('contact_phone'))) ?>">
+                <?= esc(setting('contact_phone')) ?>
+              </a>
             </div>
-            <div>
-              <label for="project_type">Project Type</label>
-              <select id="project_type" name="project_type">
-                <option value="" disabled selected>Select a type…</option>
-                <option>Theatre Production</option>
-                <option>Live Event</option>
-                <option>Commercial</option>
-                <option>Other</option>
-              </select>
+            <div class="contact-detail">
+              <span class="contact-detail-key">Email</span>
+              <a href="mailto:<?= esc(setting('contact_email')) ?>">
+                <?= esc(setting('contact_email')) ?>
+              </a>
             </div>
-            <div>
-              <label for="message">Message</label>
-              <textarea id="message" name="message" placeholder="Tell me about your production, dates, venue…" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn" id="submitBtn">Send Message →</button>
-            <p class="gdpr-note">Your details won't be shared with anyone.</p>
-          </form>
-
-          <div class="success-msg" id="successMsg">
-            <h3>✅ Message sent!</h3>
-            <p>Thanks for getting in touch. I'll reply within 24 hours.</p>
           </div>
-        </div>
 
+          <div>
+            <form id="contactForm" novalidate>
+              <div class="form-error" id="formError"></div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name" placeholder="Your name" required />
+                </div>
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" placeholder="your@email.com" required />
+                </div>
+              </div>
+              <div class="field">
+                <label for="phone">Phone <span style="font-weight:400;letter-spacing:0">(optional)</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="07700 900000" />
+              </div>
+              <div class="field">
+                <label for="project_type">Project Type</label>
+                <select id="project_type" name="project_type">
+                  <option value="" disabled selected>Select a type…</option>
+                  <option>Theatre Production</option>
+                  <option>Live Event</option>
+                  <option>Commercial</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell me about your production, dates, venue…" required></textarea>
+              </div>
+              <button type="submit" class="submit-btn" id="submitBtn">Send Message &rarr;</button>
+              <p class="gdpr-note">Your details won't be shared with anyone.</p>
+            </form>
+
+            <div class="success-msg" id="successMsg">
+              <p class="success-msg-title">Message sent.</p>
+              <p class="success-msg-body">Thanks for getting in touch. I'll reply within 24 hours.</p>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- FOOTER -->
   <footer>
-    <div class="logo">HR <span>Lighting</span></div>
+    <span class="footer-brand">HR <em>Lighting</em></span>
     <ul class="footer-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#productions">Productions</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <p class="copy">&copy; <?= date('Y') ?> <?= esc(setting('site_name')) ?> &nbsp;·&nbsp; <span style="color:#f59e0b;font-weight:700;">DEMO PREVIEW</span></p>
+    <p class="footer-copy">&copy; <?= date('Y') ?> <?= esc(setting('site_name')) ?></p>
   </footer>
 
   <script>
-    // Active nav highlight on scroll
-    const sections = document.querySelectorAll('section[id]');
+    // Active nav on scroll
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    const sections = document.querySelectorAll('[id]');
     window.addEventListener('scroll', () => {
       let current = '';
-      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-      document.querySelectorAll('nav a[href^="#"]').forEach(a => {
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 80) current = s.id;
+      });
+      navLinks.forEach(a => {
         a.classList.toggle('active', a.getAttribute('href') === '#' + current);
       });
     });
 
-    // Contact form — POST to api.php
+    // Contact form
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const btn   = document.getElementById('submitBtn');
-      const err   = document.getElementById('formError');
-      const succ  = document.getElementById('successMsg');
+      const btn  = document.getElementById('submitBtn');
+      const err  = document.getElementById('formError');
+      const succ = document.getElementById('successMsg');
 
-      btn.disabled   = true;
-      btn.textContent = 'Sending…';
+      btn.disabled    = true;
+      btn.textContent = 'Sending\u2026';
       err.style.display = 'none';
 
       const body = new URLSearchParams(new FormData(this));
@@ -684,16 +833,16 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
           this.style.display = 'none';
           succ.style.display = 'block';
         } else {
-          err.textContent  = json.error || 'Something went wrong. Please try again.';
+          err.textContent   = json.error || 'Something went wrong. Please try again.';
           err.style.display = 'block';
           btn.disabled      = false;
-          btn.textContent   = 'Send Message →';
+          btn.textContent   = 'Send Message \u2192';
         }
       } catch {
-        err.textContent  = 'Could not send message. Please email directly.';
+        err.textContent   = 'Could not send. Please email directly.';
         err.style.display = 'block';
         btn.disabled      = false;
-        btn.textContent   = 'Send Message →';
+        btn.textContent   = 'Send Message \u2192';
       }
     });
   </script>
