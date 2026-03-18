@@ -6,6 +6,11 @@ header('X-Content-Type-Options: nosniff');
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+// Version check — used by the public site to detect content changes
+if (($_GET['action'] ?? '') === 'version') {
+    json_response(['v' => setting('last_updated', '0')]);
+}
+
 if ($method !== 'POST') {
     json_response(['error' => 'Method not allowed'], 405);
 }
