@@ -776,13 +776,20 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 
 // ── Helpers ─────────────────────────────────────────────────
 
+const _siteChannel = new BroadcastChannel('hrls_site');
+
 async function api(action, data = {}) {
   const fd = new FormData();
   fd.append('action', action);
   fd.append('csrf', CSRF);
   Object.entries(data).forEach(([k, v]) => fd.append(k, v));
-  const res = await fetch('api.php', { method: 'POST', body: fd });
-  return res.json();
+  const res  = await fetch('api.php', { method: 'POST', body: fd });
+  const json = await res.json();
+  const contentActions = ['save_settings','save_service','delete_service','save_production','delete_production','save_skill','delete_skill'];
+  if (json.success && contentActions.includes(action)) {
+    _siteChannel.postMessage('reload');
+  }
+  return json;
 }
 
 async function apiGet(action) {
