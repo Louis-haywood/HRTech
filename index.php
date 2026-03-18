@@ -450,9 +450,6 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   </style>
 </head>
 <body>
-
-  <div class="demo-banner">Preview — content subject to change</div>
-
   <nav id="navbar">
     <span class="nav-brand">HR <em>Lighting</em></span>
     <ul class="nav-links">
