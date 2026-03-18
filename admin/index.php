@@ -395,16 +395,88 @@ if (is_logged_in()) {
       display: inline-block; margin-right: 6px; flex-shrink: 0;
     }
 
+    /* ── HAMBURGER ───────────────────────────────────────────────── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      flex-shrink: 0;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--c-muted);
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--c-fg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--c-fg); }
+
     /* ── RESPONSIVE ──────────────────────────────────────────────── */
     @media (max-width: 860px) {
       .form-grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 600px) {
-      .nav-links { gap: 1rem; }
-      .nav-links button.nav-item { font-size: 0.6875rem; }
+
+    @media (max-width: 700px) {
+      /* Show hamburger, hide inline nav links */
+      .nav-hamburger { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--c-surface);
+        border-bottom: 1px solid var(--c-border);
+        flex-direction: column;
+        gap: 0;
+        z-index: 190;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { width: 100%; }
+      .nav-links button.nav-item {
+        width: 100%;
+        text-align: left;
+        padding: 0.875rem var(--gutter);
+        font-size: 0.9375rem;
+        border-bottom: 1px solid rgba(155,92,246,0.08);
+      }
+      .nav-links li:last-child button.nav-item { border-bottom: none; }
+
+      /* Section head: wrap action button to its own line */
+      .section-head-action { width: 100%; margin-left: 0; }
+      .section-head-action .btn { width: 100%; justify-content: center; }
     }
-    @media (max-width: 480px) {
-      .nav-links { display: none; }
+
+    @media (max-width: 500px) {
+      /* Item cards: stack actions below info */
+      .item-card { flex-wrap: wrap; gap: 0.75rem; }
+      .item-card-actions { width: 100%; }
+
+      /* Modals: slide up from bottom, full width */
+      .modal-backdrop { align-items: flex-end; padding: 0; }
+      .modal { max-height: 90dvh; overflow-y: auto; max-width: 100%; }
+      .modal-footer { position: sticky; bottom: 0; background: var(--c-surface); padding-top: 1rem; margin-top: 1rem; }
+
+      /* Login box: flush edges */
+      .login-box { padding: 2rem 1.25rem; }
+    }
+
+    /* Safe-area insets (notch / home indicator) */
+    @supports (padding: env(safe-area-inset-left)) {
+      .demo-banner, nav {
+        padding-left: max(var(--gutter), env(safe-area-inset-left));
+        padding-right: max(var(--gutter), env(safe-area-inset-right));
+      }
+      .wrap {
+        padding-left: max(var(--gutter), env(safe-area-inset-left));
+        padding-right: max(var(--gutter), env(safe-area-inset-right));
+      }
     }
   </style>
 </head>
@@ -481,7 +553,7 @@ if (is_logged_in()) {
 
   <nav id="navbar">
     <span class="nav-brand">HR <em>Lighting</em></span>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><button class="nav-item active" data-page="settings">Settings</button></li>
       <li><button class="nav-item" data-page="services">Services</button></li>
       <li><button class="nav-item" data-page="productions">Productions</button></li>
@@ -490,6 +562,9 @@ if (is_logged_in()) {
       <li><button class="nav-item" data-page="password">Password</button></li>
       <li><button class="nav-item" id="logoutBtn">Sign Out</button></li>
     </ul>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <?php if ($show_first_login): ?>
