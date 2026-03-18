@@ -25,11 +25,11 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   <nav id="navbar">
     <span class="nav-brand">HR <em>Lighting</em></span>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#productions">Productions</a></li>
-      <?php if ($portfolio): ?><li><a href="#portfolio">Portfolio</a></li><?php endif; ?>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a class="nav-item active" data-page="services">Services</a></li>
+      <li><a class="nav-item" data-page="productions">Productions</a></li>
+      <?php if ($portfolio): ?><li><a class="nav-item" data-page="portfolio">Portfolio</a></li><?php endif; ?>
+      <li><a class="nav-item" data-page="about">About</a></li>
+      <li><a class="nav-item" data-page="contact">Contact</a></li>
     </ul>
     <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -46,14 +46,14 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
         </div>
         <aside class="hero-aside">
           <p class="hero-desc"><?= esc(setting('hero_subtext')) ?></p>
-          <a href="#contact" class="hero-cta">Get in touch &rarr;</a>
+          <a class="hero-cta" data-page="contact">Get in touch &rarr;</a>
         </aside>
       </div>
     </div>
   </div>
 
   <!-- SERVICES -->
-  <div class="section-outer" id="services">
+  <div class="page active" id="page-services">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
@@ -74,7 +74,7 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   </div>
 
   <!-- PRODUCTIONS -->
-  <div class="section-outer" id="productions">
+  <div class="page" id="page-productions">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
@@ -105,7 +105,7 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
 
   <?php if ($portfolio): ?>
   <!-- PORTFOLIO -->
-  <div class="section-outer" id="portfolio">
+  <div class="page" id="page-portfolio">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
@@ -128,7 +128,7 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   <?php endif; ?>
 
   <!-- ABOUT -->
-  <div class="section-outer" id="about">
+  <div class="page" id="page-about">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
@@ -186,7 +186,7 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   </div>
 
   <!-- CONTACT -->
-  <div id="contact">
+  <div class="page" id="page-contact">
     <div class="wrap">
       <div class="section-inner">
         <div class="section-head">
@@ -221,17 +221,17 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
               <div class="form-error" id="formError"></div>
               <div class="form-row">
                 <div class="field">
-                  <label for="name">Name</label>
-                  <input type="text" id="name" name="name" placeholder="Your name" required />
+                  <label for="fname">Name</label>
+                  <input type="text" id="fname" name="name" placeholder="Your name" required />
                 </div>
                 <div class="field">
-                  <label for="email">Email</label>
-                  <input type="email" id="email" name="email" placeholder="your@email.com" required />
+                  <label for="femail">Email</label>
+                  <input type="email" id="femail" name="email" placeholder="your@email.com" required />
                 </div>
               </div>
               <div class="field">
-                <label for="phone">Phone <span style="font-weight:400;letter-spacing:0">(optional)</span></label>
-                <input type="tel" id="phone" name="phone" placeholder="07700 900000" />
+                <label for="fphone">Phone <span style="font-weight:400;letter-spacing:0">(optional)</span></label>
+                <input type="tel" id="fphone" name="phone" placeholder="07700 900000" />
               </div>
               <div class="field">
                 <label for="project_type">Project Type</label>
@@ -266,17 +266,38 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
   <footer>
     <span class="footer-brand">HR <em>Lighting</em></span>
     <ul class="footer-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#productions">Productions</a></li>
-      <?php if ($portfolio): ?><li><a href="#portfolio">Portfolio</a></li><?php endif; ?>
-      <li><a href="#about">About</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a data-page="services">Services</a></li>
+      <li><a data-page="productions">Productions</a></li>
+      <?php if ($portfolio): ?><li><a data-page="portfolio">Portfolio</a></li><?php endif; ?>
+      <li><a data-page="about">About</a></li>
+      <li><a data-page="contact">Contact</a></li>
     </ul>
     <p class="footer-copy">&copy; <?= date('Y') ?> <?= esc(setting('site_name')) ?></p>
   </footer>
 
   <script>
-    // Hamburger menu
+    // ── Page switching ────────────────────────────────────────────
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(a => a.classList.remove('active'));
+      const page = document.getElementById('page-' + name);
+      if (page) page.classList.add('active');
+      document.querySelectorAll('[data-page="' + name + '"]').forEach(a => a.classList.add('active'));
+      window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll('[data-page]').forEach(el => {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', e => {
+        e.preventDefault();
+        showPage(el.dataset.page);
+        _navLinks.classList.remove('open');
+        _hamburger.classList.remove('open');
+        _hamburger.setAttribute('aria-label', 'Open menu');
+      });
+    });
+
+    // ── Hamburger menu ───────────────────────────────────────────
     const _hamburger = document.getElementById('navHamburger');
     const _navLinks  = document.getElementById('navLinks');
 
@@ -286,14 +307,6 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
       _hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     });
 
-    _navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        _navLinks.classList.remove('open');
-        _hamburger.classList.remove('open');
-        _hamburger.setAttribute('aria-label', 'Open menu');
-      });
-    });
-
     document.addEventListener('click', e => {
       if (!_navLinks.contains(e.target) && e.target !== _hamburger && !_hamburger.contains(e.target)) {
         _navLinks.classList.remove('open');
@@ -301,23 +314,10 @@ $portfolio   = $db->query("SELECT * FROM portfolio   ORDER BY sort_order, id")->
       }
     });
 
-    // Active nav on scroll
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-    const sections = document.querySelectorAll('[id]');
-    window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(s => {
-        if (window.scrollY >= s.offsetTop - 80) current = s.id;
-      });
-      navLinks.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-      });
-    });
-
-    // Reload when admin saves changes (same browser, BroadcastChannel)
+    // ── Reload when admin saves changes ──────────────────────────
     new BroadcastChannel('hrls_site').onmessage = () => location.reload();
 
-    // Contact form
+    // ── Contact form ─────────────────────────────────────────────
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const btn  = document.getElementById('submitBtn');
