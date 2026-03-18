@@ -1,5 +1,9 @@
 textarea { min-height: 130px; }
 
+/* ── PAGES ───────────────────────────────────────────────────── */
+.page { display: none; border-bottom: 1px solid var(--c-border); }
+.page.active { display: block; }
+
 /* ── HERO ────────────────────────────────────────────────────── */
 .hero-outer {
   background: linear-gradient(135deg, #0D0D12 60%, #1A0A2E 100%);
