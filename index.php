@@ -22,12 +22,13 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
   <style>
     /* ── DESIGN TOKENS ───────────────────────────────────────────── */
     :root {
-      --c-bg:      #09090a;
-      --c-surface: #0d0c0a;
-      --c-fg:      #ede8df;
-      --c-accent:  #d4921a;
-      --c-muted:   #4e4b44;
-      --c-border:  #1c1b17;
+      --c-bg:      #0D0D12;
+      --c-surface: #1A1525;
+      --c-fg:      #FFFFFF;
+      --c-accent:  #9B5CF6;
+      --c-accent-light: #C084FC;
+      --c-muted:   #9D9DB8;
+      --c-border:  rgba(155, 92, 246, 0.2);
 
       --f-display: 'Playfair Display', Georgia, serif;
       --f-mono:    'Space Mono', 'Courier New', monospace;
@@ -85,8 +86,8 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       position: sticky;
       top: 0;
       z-index: 300;
-      background: var(--c-accent);
-      color: #000;
+      background: var(--c-surface);
+      color: var(--c-accent);
       font-family: var(--f-mono);
       font-size: var(--s-11);
       font-weight: 700;
@@ -136,6 +137,7 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
 
     /* ── HERO ────────────────────────────────────────────────────── */
     .hero-outer {
+      background: linear-gradient(135deg, #0D0D12 60%, #1A0A2E 100%);
       border-bottom: 1px solid var(--c-border);
     }
     .hero {
@@ -240,7 +242,12 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       margin-bottom: 0.75rem;
       letter-spacing: -0.015em;
     }
-    .service-row.featured .service-name { color: var(--c-accent); }
+    .service-row.featured .service-name {
+      background: linear-gradient(135deg, #9B5CF6, #7C3AED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
     .service-body {
       font-size: var(--s-13);
@@ -466,15 +473,15 @@ $skills      = $db->query("SELECT * FROM skills      ORDER BY sort_order")->fetc
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      background: var(--c-accent);
-      color: #000;
+      background: linear-gradient(135deg, #9B5CF6, #7C3AED);
+      color: #fff;
       border: none;
       padding: 0.875rem 1.75rem;
       cursor: pointer;
       align-self: flex-start;
-      transition: background 0.15s;
+      transition: background 0.15s, box-shadow 0.15s;
     }
-    .submit-btn:hover    { background: #be821a; }
+    .submit-btn:hover    { background: linear-gradient(135deg, #9B5CF6, #C084FC); box-shadow: 0 0 24px rgba(155,92,246,0.4); }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .gdpr-note {
