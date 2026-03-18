@@ -48,6 +48,7 @@ function seed_defaults(PDO $db): void {
         // Temporary password — admin is prompted to change this on first login
         'admin_password'  => password_hash('Harry', PASSWORD_DEFAULT),
         'first_login'     => '1',
+        'last_updated'    => (string)time(),
     ];
 
     $stmt = $db->prepare("INSERT INTO settings (`key`, value) VALUES (?, ?)");
