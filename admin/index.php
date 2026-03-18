@@ -149,9 +149,7 @@ if (is_logged_in()) {
       border-radius: 0 2px 2px 0;
     }
 
-    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-
-    .badge {
+.badge {
       background: var(--c-accent);
       color: #fff;
       font-size: 10px;
@@ -919,14 +917,14 @@ document.getElementById('saveServiceBtn').addEventListener('click', async () => 
     featured: document.getElementById('service_featured').checked ? 1 : 0,
   });
   btn.disabled = false; btn.textContent = 'Save Service';
-  if (res.success) { closeModal('serviceModal'); loadServices(); showAlert('servicesAlert', '✅ Service saved!'); }
+  if (res.success) { closeModal('serviceModal'); loadServices(); showAlert('servicesAlert', 'Service saved.'); }
   else showAlert('servicesAlert', res.error || 'Error saving.', 'error');
 });
 
 async function deleteService(id, title) {
   if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
   const res = await api('delete_service', { id });
-  if (res.success) { loadServices(); showAlert('servicesAlert', '✅ Service deleted.'); }
+  if (res.success) { loadServices(); showAlert('servicesAlert', 'Service deleted.'); }
   else showAlert('servicesAlert', res.error || 'Error deleting.', 'error');
 }
 
@@ -983,14 +981,14 @@ document.getElementById('saveProdBtn').addEventListener('click', async () => {
     tags:  document.getElementById('prod_tags').value,
   });
   btn.disabled = false; btn.textContent = 'Save Production';
-  if (res.success) { closeModal('productionModal'); loadProductions(); showAlert('productionsAlert', '✅ Production saved!'); }
+  if (res.success) { closeModal('productionModal'); loadProductions(); showAlert('productionsAlert', 'Production saved.'); }
   else showAlert('productionsAlert', res.error || 'Error saving.', 'error');
 });
 
 async function deleteProduction(id, title) {
   if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
   const res = await api('delete_production', { id });
-  if (res.success) { loadProductions(); showAlert('productionsAlert', '✅ Production deleted.'); }
+  if (res.success) { loadProductions(); showAlert('productionsAlert', 'Production deleted.'); }
   else showAlert('productionsAlert', res.error || 'Error deleting.', 'error');
 }
 
@@ -1035,14 +1033,14 @@ document.getElementById('saveSkillBtn').addEventListener('click', async () => {
     name: document.getElementById('skill_name').value,
   });
   btn.disabled = false; btn.textContent = 'Save Skill';
-  if (res.success) { closeModal('skillModal'); loadSkills(); showAlert('skillsAlert', '✅ Skill saved!'); }
+  if (res.success) { closeModal('skillModal'); loadSkills(); showAlert('skillsAlert', 'Skill saved.'); }
   else showAlert('skillsAlert', res.error || 'Error saving.', 'error');
 });
 
 async function deleteSkill(id, name) {
   if (!confirm(`Delete "${name}"?`)) return;
   const res = await api('delete_skill', { id });
-  if (res.success) { loadSkills(); showAlert('skillsAlert', '✅ Skill deleted.'); }
+  if (res.success) { loadSkills(); showAlert('skillsAlert', 'Skill deleted.'); }
   else showAlert('skillsAlert', res.error || 'Error deleting.', 'error');
 }
 
@@ -1060,9 +1058,9 @@ async function loadInbox() {
       <div class="submission-meta">
         ${s.is_read == 0 ? '<span class="unread-dot"></span>' : ''}
         <strong>${escHtml(s.name)}</strong>
-        <span>✉️ ${escHtml(s.email)}</span>
-        ${s.phone ? `<span>📞 ${escHtml(s.phone)}</span>` : ''}
-        ${s.project_type ? `<span>📋 ${escHtml(s.project_type)}</span>` : ''}
+        <span>${escHtml(s.email)}</span>
+        ${s.phone ? `<span>${escHtml(s.phone)}</span>` : ''}
+        ${s.project_type ? `<span>${escHtml(s.project_type)}</span>` : ''}
         <span style="margin-left:auto;font-size:12px;color:#6b6b80">${escHtml(s.submitted_at)}</span>
       </div>
       <p>${escHtml(s.message)}</p>
@@ -1088,7 +1086,7 @@ async function markRead(id) {
 async function deleteSubmission(id) {
   if (!confirm('Delete this enquiry permanently?')) return;
   const res = await api('delete_submission', { id });
-  if (res.success) { document.getElementById('sub-' + id)?.remove(); showAlert('inboxAlert', '✅ Enquiry deleted.'); }
+  if (res.success) { document.getElementById('sub-' + id)?.remove(); showAlert('inboxAlert', 'Enquiry deleted.'); }
 }
 
 // ── PASSWORD ─────────────────────────────────────────────────
@@ -1111,7 +1109,7 @@ document.getElementById('changePassBtn').addEventListener('click', async () => {
   btn.disabled = false; btn.textContent = 'Update Password';
 
   if (res.success) {
-    showAlert('passwordAlert', '✅ Password updated successfully!');
+    showAlert('passwordAlert', 'Password updated.');
     document.getElementById('currentPass').value = '';
     document.getElementById('newPass').value      = '';
     document.getElementById('confirmPass').value  = '';
