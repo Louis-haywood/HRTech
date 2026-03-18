@@ -21,6 +21,7 @@ if (is_logged_in()) {
   <link rel="stylesheet" href="../style.css" />
   <style>
     textarea { min-height: 90px; }
+    nav { top: 0; }
 
     /* ── PAGES / SECTIONS ────────────────────────────────────────── */
     .page { display: none; border-bottom: 1px solid var(--c-border); }
