@@ -288,17 +288,6 @@ if (is_logged_in()) {
       .login-box { padding: 2rem 1.25rem; }
     }
 
-    /* Safe-area insets (notch / home indicator) */
-    @supports (padding: env(safe-area-inset-left)) {
-      .demo-banner, nav {
-        padding-left: max(var(--gutter), env(safe-area-inset-left));
-        padding-right: max(var(--gutter), env(safe-area-inset-right));
-      }
-      .wrap {
-        padding-left: max(var(--gutter), env(safe-area-inset-left));
-        padding-right: max(var(--gutter), env(safe-area-inset-right));
-      }
-    }
   </style>
 </head>
 <body>
